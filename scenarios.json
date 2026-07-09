@@ -1,0 +1,60 @@
+{
+  "scenarios": [
+    {
+      "name": "commitments and check-ins are visible to the reciprocal partner but nobody else",
+      "members": { "me": "adult", "partner": "adult", "other": "adult" },
+      "steps": [
+        { "action": "seedRaw", "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)", "params": ["{{me}}", "{{partner}}", "s1"] },
+        { "action": "seedRaw", "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)", "params": ["{{partner}}", "{{me}}", "s1"] },
+        { "action": "db", "as": "me", "sql": "INSERT INTO app_accountability_partner__commitments (id, member_id, title, detail, cadence, target_per_week, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", "params": ["c1", "{{me}}", "Stay sober", "", "daily", 7, 1, "2026-07-08T09:00:00Z", "2026-07-08T09:00:00Z"], "expect": { "status": 200 } },
+        { "action": "db", "as": "me", "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)", "params": ["k1", "{{me}}", "c1", "2026-07-08", "on_track", "", "2026-07-08T09:00:00Z"], "expect": { "status": 200 } },
+        { "action": "db", "as": "partner", "sql": "SELECT id FROM app_accountability_partner__commitments", "expect": { "status": 200, "rowCount": 1 } },
+        { "action": "db", "as": "partner", "sql": "SELECT id FROM app_accountability_partner__checkins", "expect": { "status": 200, "rowCount": 1 } },
+        { "action": "db", "as": "other", "sql": "SELECT id FROM app_accountability_partner__commitments", "expect": { "status": 200, "rowCount": 0 } },
+        { "action": "db", "as": "other", "sql": "SELECT id FROM app_accountability_partner__checkins", "expect": { "status": 200, "rowCount": 0 } }
+      ]
+    },
+    {
+      "name": "a check-in INSERT forces member_id to the caller",
+      "members": { "me": "adult", "partner": "adult" },
+      "steps": [
+        { "action": "seedRaw", "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)", "params": ["{{me}}", "{{partner}}", "s1"] },
+        { "action": "seedRaw", "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)", "params": ["{{partner}}", "{{me}}", "s1"] },
+        { "action": "db", "as": "me", "sql": "INSERT INTO app_accountability_partner__commitments (id, member_id, title, detail, cadence, target_per_week, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", "params": ["c1", "{{me}}", "Stay sober", "", "daily", 7, 1, "2026-07-08T09:00:00Z", "2026-07-08T09:00:00Z"], "expect": { "status": 200 } },
+        { "action": "db", "as": "me", "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)", "params": ["k1", "{{partner}}", "c1", "2026-07-08", "on_track", "", "2026-07-08T09:00:00Z"], "expect": { "status": 200 } },
+        { "action": "db", "as": "partner", "sql": "SELECT id FROM app_accountability_partner__checkins WHERE member_id = ?", "params": ["{{partner}}"], "expect": { "status": 200, "rowCount": 0 } },
+        { "action": "db", "as": "me", "sql": "SELECT id FROM app_accountability_partner__checkins WHERE member_id = ?", "params": ["{{me}}"], "expect": { "status": 200, "rowCount": 1 } }
+      ]
+    },
+    {
+      "name": "unique_per_member allows at most one check-in per commitment per day",
+      "members": { "me": "adult", "partner": "adult" },
+      "steps": [
+        { "action": "seedRaw", "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)", "params": ["{{me}}", "{{partner}}", "s1"] },
+        { "action": "seedRaw", "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)", "params": ["{{partner}}", "{{me}}", "s1"] },
+        { "action": "db", "as": "me", "sql": "INSERT INTO app_accountability_partner__commitments (id, member_id, title, detail, cadence, target_per_week, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", "params": ["c1", "{{me}}", "Stay sober", "", "daily", 7, 1, "2026-07-08T09:00:00Z", "2026-07-08T09:00:00Z"], "expect": { "status": 200 } },
+        { "action": "db", "as": "me", "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)", "params": ["k1", "{{me}}", "c1", "2026-07-08", "on_track", "", "2026-07-08T09:00:00Z"], "expect": { "status": 200 } },
+        { "action": "db", "as": "me", "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)", "params": ["k2", "{{me}}", "c1", "2026-07-08", "partial", "", "2026-07-08T18:00:00Z"], "expect": { "status": 403 } }
+      ]
+    },
+    {
+      "name": "messages and partner_config reject direct /api/db writes (endpoint_writes_only)",
+      "members": { "me": "adult", "partner": "adult" },
+      "steps": [
+        { "action": "seedRaw", "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)", "params": ["{{me}}", "{{partner}}", "s1"] },
+        { "action": "seedRaw", "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)", "params": ["{{partner}}", "{{me}}", "s1"] },
+        { "action": "db", "as": "me", "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, ?, ?, ?)", "params": ["m1", "{{me}}", "{{partner}}", "forged", "2026-07-08T09:00:00Z", null, "s1"], "expect": { "status": 403 } },
+        { "action": "db", "as": "me", "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)", "params": ["{{me}}", "{{partner}}", "forged"], "expect": { "status": 403 } }
+      ]
+    },
+    {
+      "name": "alert profiles are owner-only — a member cannot read another's switch",
+      "members": { "me": "adult", "partner": "adult" },
+      "steps": [
+        { "action": "seedRaw", "sql": "INSERT INTO app_accountability_partner__profiles (id, member_id, active, interval_hours, message, recipient_member_ids, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", "params": ["p1", "{{partner}}", 1, 48, "", "[]", "2026-07-08T09:00:00Z", "2026-07-08T09:00:00Z"] },
+        { "action": "db", "as": "me", "sql": "SELECT id FROM app_accountability_partner__profiles", "expect": { "status": 200, "rowCount": 0 } },
+        { "action": "db", "as": "partner", "sql": "SELECT id FROM app_accountability_partner__profiles", "expect": { "status": 200, "rowCount": 1 } }
+      ]
+    }
+  ]
+}

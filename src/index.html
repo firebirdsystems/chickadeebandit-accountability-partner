@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <base href="/run/accountability-partner/" />
+  <title>Accountability Partner</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--hub-font, system-ui, -apple-system, "Segoe UI", sans-serif);
+      font-size: var(--hub-font-size, 15px);
+      color: var(--hub-text, #1f2937);
+      background: var(--hub-bg, #f9fafb);
+    }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 16px; }
+    h1, h2, h3 { margin: 0 0 8px; }
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.05rem; margin-top: 4px; }
+    p { margin: 0 0 8px; line-height: 1.5; }
+    .muted { color: var(--hub-text-muted, #6b7280); }
+    .card {
+      background: var(--hub-surface, #fff);
+      border: 1px solid var(--hub-border, #e5e7eb);
+      border-radius: var(--hub-radius, 12px);
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .row { display: flex; align-items: center; gap: 10px; }
+    .between { justify-content: space-between; }
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 600; flex: 0 0 auto;
+    }
+    .btn {
+      border: 1px solid var(--hub-border, #e5e7eb);
+      background: var(--hub-surface, #fff);
+      color: var(--hub-text, #1f2937);
+      border-radius: var(--hub-radius, 10px);
+      padding: 8px 12px; font-size: .9rem; cursor: pointer;
+    }
+    .btn:hover { border-color: var(--hub-primary, #4f46e5); }
+    .btn:disabled { opacity: .55; cursor: default; }
+    .btn-primary {
+      background: var(--hub-primary, #4f46e5);
+      color: var(--hub-primary-fg, #fff);
+      border-color: var(--hub-primary, #4f46e5);
+    }
+    .btn-primary:hover { background: var(--hub-primary-hover, #4338ca); }
+    .btn-sos {
+      background: #dc2626; color: #fff; border-color: #dc2626; font-weight: 600;
+    }
+    .btn-sos:hover { background: #b91c1c; }
+    .btn-sm { padding: 5px 9px; font-size: .82rem; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 9px; border-radius: 999px; font-size: .78rem; font-weight: 600;
+    }
+    .pill-on   { background: #dcfce7; color: #166534; }
+    .pill-part { background: #fef9c3; color: #854d0e; }
+    .pill-miss { background: #fee2e2; color: #991b1b; }
+    .pill-none { background: var(--hub-bg, #f3f4f6); color: var(--hub-text-muted, #6b7280); }
+    .streak { font-weight: 700; }
+    .banner {
+      background: #fef3c7; border: 1px solid #fde68a; color: #92400e;
+      border-radius: var(--hub-radius, 10px); padding: 10px 12px; margin-bottom: 14px;
+    }
+    .goal { padding: 10px 0; border-top: 1px solid var(--hub-border, #eef0f3); }
+    .goal:first-child { border-top: 0; }
+    .goal-title { font-weight: 600; }
+    .checkbtns { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+    .msg { padding: 8px 0; border-top: 1px solid var(--hub-border, #eef0f3); }
+    .msg:first-child { border-top: 0; }
+    .msg-meta { font-size: .76rem; }
+    .msg.sos .msg-body { color: #b91c1c; font-weight: 600; }
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%; padding: 8px; border: 1px solid var(--hub-border, #e5e7eb);
+      border-radius: 8px; font: inherit; background: var(--hub-surface, #fff);
+      color: var(--hub-text, #1f2937);
+    }
+    label { display: block; font-size: .82rem; margin: 10px 0 3px; font-weight: 600; }
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,.4);
+      display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50;
+    }
+    .modal {
+      background: var(--hub-surface, #fff); border-radius: var(--hub-radius, 14px);
+      padding: 18px; width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto;
+    }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+    .member-option { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 8px; cursor: pointer; }
+    .member-option:hover { background: var(--hub-bg, #f3f4f6); }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 520px) { .grid2 { grid-template-columns: 1fr; } }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div id="app"><p class="muted">Loading…</p></div>
+  </div>
+
+  <script type="module">
+    import {
+      memberColor, initial, esc, hubConfirm, hubAlert,
+      sendHubNotification, hubAppUrl, formatRelativeDate,
+    } from "/hub-sdk.js";
+    import {
+      dateKey, statusForDay, computeStreak, weeklyKept,
+      isOverdue, daysSince, milestoneReached,
+    } from "./logic.js";
+
+    const CONTEXT    = window.__CONTEXT_URL    ?? "";
+    const DB         = window.__DB_URL         ?? "";
+    const EVENTS_URL = window.__EVENTS_URL     ?? "/api/events";
+    const APP_ID     = window.__APP_ID         ?? "accountability-partner";
+    const ME         = window.__CURRENT_MEMBER ?? null;
+
+    const SOS_PREFIX = "🆘 ";
+
+    // ── State ──────────────────────────────────────────────────────────────
+    let members = [];
+    let memberMap = new Map();
+    let partnerId = null;
+    let partnerReciprocal = false;
+    let commitments = [];   // me + partner
+    let checkins = [];      // me + partner
+    let messages = [];      // both directions
+    let myProfile = null;   // my alert switch row (owner_only)
+    let alertStatus = { entitled: false, missing_capabilities: [], last_checkin_at: null };
+    let modalEl = null;
+
+    const partner = () => (partnerId ? memberMap.get(partnerId) : null);
+    const myId = () => ME?.id ?? "demo-me";
+
+    async function db(sql, params = []) {
+      if (!DB) return { rows: [] };
+      const res = await fetch(DB, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sql, params }),
+      });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? `DB error ${res.status}`);
+      return res.json();
+    }
+
+    function memberName(id) { return memberMap.get(id)?.name ?? "Unknown"; }
+
+    // ── Loaders ────────────────────────────────────────────────────────────
+    async function loadMembers() {
+      if (!CONTEXT) {
+        members = [
+          { id: "demo-me",      name: "You",   role: "adult" },
+          { id: "demo-partner", name: "Sam",   role: "adult" },
+          { id: "demo-other",   name: "Riley", role: "adult" },
+        ];
+        memberMap = new Map(members.map((m) => [m.id, m]));
+        return;
+      }
+      try {
+        const res = await fetch(`${CONTEXT}?keys=family.members`);
+        members = ((await res.json())["family.members"]) ?? [];
+      } catch { members = []; }
+      memberMap = new Map(members.map((m) => [m.id, m]));
+    }
+
+    async function loadPartner() {
+      if (!ME) { partnerId = "demo-partner"; partnerReciprocal = true; return; }
+      try {
+        const res = await fetch(`/run/${APP_ID}/api/partner`);
+        const s = res.ok ? await res.json() : {};
+        partnerId = s.partner_id ?? null;
+        partnerReciprocal = !!s.reciprocal;
+      } catch { partnerId = null; partnerReciprocal = false; }
+    }
+
+    async function loadData() {
+      if (!ME) { seedDemo(); return; }
+      const [c, k, m, p] = await Promise.all([
+        db("SELECT * FROM app_accountability_partner__commitments ORDER BY created_at DESC").catch(() => ({ rows: [] })),
+        db("SELECT * FROM app_accountability_partner__checkins ORDER BY check_date DESC").catch(() => ({ rows: [] })),
+        db("SELECT * FROM app_accountability_partner__messages ORDER BY sent_at ASC").catch(() => ({ rows: [] })),
+        db("SELECT * FROM app_accountability_partner__profiles WHERE member_id = ? LIMIT 1", [myId()]).catch(() => ({ rows: [] })),
+      ]);
+      commitments = c.rows;
+      checkins = k.rows;
+      messages = m.rows;
+      myProfile = p.rows[0] ?? null;
+    }
+
+    async function loadAlertStatus() {
+      if (!ME) return;
+      try {
+        const res = await fetch(`/run/${APP_ID}/api/check-in`);
+        if (res.ok) alertStatus = await res.json();
+      } catch { /* non-fatal */ }
+    }
+
+    function seedDemo() {
+      const today = dateKey();
+      const y = (n) => { const d = new Date(); d.setDate(d.getDate() - n); return dateKey(d); };
+      commitments = [
+        { id: "c-me", member_id: "demo-me", title: "Stay sober today", detail: "One day at a time.", cadence: "daily", target_per_week: 7, active: 1, created_at: y(20) },
+        { id: "c-p",  member_id: "demo-partner", title: "Gym 4× / week", detail: "", cadence: "weekly", target_per_week: 4, active: 1, created_at: y(15) },
+      ];
+      checkins = [
+        { id: "k1", member_id: "demo-me", commitment_id: "c-me", check_date: y(2), status: "on_track", created_at: y(2) + "T09:00:00Z" },
+        { id: "k2", member_id: "demo-me", commitment_id: "c-me", check_date: y(1), status: "on_track", created_at: y(1) + "T09:00:00Z" },
+        { id: "k3", member_id: "demo-partner", commitment_id: "c-p", check_date: y(3), status: "on_track", created_at: y(3) + "T09:00:00Z" },
+      ];
+      messages = [
+        { id: "m1", sender_id: "demo-partner", recipient_id: "demo-me", content: "Proud of you — 2 days strong!", sent_at: y(1) + "T10:00:00Z", read_at: null },
+      ];
+      myProfile = null;
+    }
+
+    // ── Derived ────────────────────────────────────────────────────────────
+    const activeCommitmentsFor = (id) => commitments.filter((c) => c.member_id === id && Number(c.active) === 1);
+    const lastCheckinFor = (id) => {
+      const rows = checkins.filter((c) => c.member_id === id).map((c) => c.created_at).sort();
+      return rows.length ? rows[rows.length - 1] : null;
+    };
+
+    // ── Render ─────────────────────────────────────────────────────────────
+    function render() {
+      const app = document.getElementById("app");
+      if (!ME && CONTEXT) { app.innerHTML = `<div class="card"><p>Sign in to use Accountability Partner.</p></div>`; return; }
+
+      if (!partnerId || !partnerReciprocal) { app.innerHTML = renderSetup(); return; }
+      app.innerHTML = renderMain();
+    }
+
+    function renderSetup() {
+      const others = members.filter((m) => m.role === "adult" && m.id !== myId());
+      const waiting = partnerId && !partnerReciprocal;
+      const list = others.map((m) => `
+        <label class="member-option">
+          <input type="radio" name="partner" value="${esc(m.id)}" ${m.id === partnerId ? "checked" : ""} />
+          <span class="avatar" style="background:${memberColor(m.id, members)}">${esc(initial(m.name))}</span>
+          <span>${esc(m.name)}</span>
+        </label>`).join("");
+      return `
+        <div class="card">
+          <h1>🤝 Accountability Partner</h1>
+          <p class="muted">Pair up with one person to support each other's goals. Choose your partner — you'll be connected once they choose you back.</p>
+          ${waiting ? `<div class="banner">Waiting for <strong>${esc(memberName(partnerId))}</strong> to choose you back.</div>` : ""}
+          ${others.length ? `<div id="partner-list">${list}</div>
+          <div class="modal-actions">
+            <button class="btn btn-primary" data-action="save-partner">${waiting ? "Check again" : "Connect"}</button>
+          </div>` : `<p class="muted">No other adult members to pair with yet.</p>`}
+        </div>`;
+    }
+
+    function renderMain() {
+      const p = partner();
+      const pName = p?.name ?? "your partner";
+      const pLast = lastCheckinFor(partnerId);
+      const overdue = p && isOverdue(pLast, 48) && daysSince(pLast) >= 2;
+      const unread = messages.filter((m) => m.recipient_id === myId() && !m.read_at).length;
+
+      return `
+        <div class="row between">
+          <h1>🤝 Accountability</h1>
+          <span class="row" style="gap:6px">
+            <span class="avatar" style="width:26px;height:26px;font-size:.75rem;background:${memberColor(partnerId, members)}">${esc(initial(pName))}</span>
+            <span class="muted">with ${esc(pName)}</span>
+          </span>
+        </div>
+
+        ${overdue ? `<div class="banner">${esc(pName)} hasn't checked in for ${daysSince(pLast) === Infinity ? "a while" : daysSince(pLast) + " days"}. A gentle nudge might help — send some encouragement.</div>` : ""}
+
+        <div class="grid2">
+          ${renderLane(myId(), true)}
+          ${renderLane(partnerId, false)}
+        </div>
+
+        ${renderSupport(unread)}
+        ${renderAlertCard()}
+      `;
+    }
+
+    function renderLane(id, isMine) {
+      const goals = activeCommitmentsFor(id);
+      const today = dateKey();
+      const name = isMine ? "You" : memberName(id);
+      const goalsHtml = goals.length ? goals.map((c) => {
+        const streak = computeStreak(checkins, c.id, today);
+        const st = statusForDay(checkins, c.id, today);
+        const weekly = c.cadence === "weekly" ? ` · ${weeklyKept(checkins, c.id, today)}/${esc(String(c.target_per_week))} this week` : "";
+        return `
+          <div class="goal">
+            <div class="row between">
+              <span class="goal-title">${esc(c.title)}</span>
+              ${statusPill(st)}
+            </div>
+            ${c.detail ? `<p class="muted" style="margin:4px 0 0;font-size:.85rem">${esc(c.detail)}</p>` : ""}
+            <div class="row between" style="margin-top:6px">
+              <span class="muted" style="font-size:.82rem">🔥 <span class="streak">${streak}</span> day${streak === 1 ? "" : "s"}${weekly}</span>
+              ${isMine ? `<span class="row" style="gap:4px">
+                <button class="btn btn-sm" data-action="edit-goal" data-id="${esc(c.id)}">Edit</button>
+                <button class="btn btn-sm" data-action="archive-goal" data-id="${esc(c.id)}">Archive</button>
+              </span>` : ""}
+            </div>
+            ${isMine ? `<div class="checkbtns">
+              <button class="btn btn-sm ${st === "on_track" ? "btn-primary" : ""}" data-action="checkin" data-id="${esc(c.id)}" data-status="on_track">On track</button>
+              <button class="btn btn-sm ${st === "partial" ? "btn-primary" : ""}" data-action="checkin" data-id="${esc(c.id)}" data-status="partial">Partial</button>
+              <button class="btn btn-sm ${st === "missed" ? "btn-primary" : ""}" data-action="checkin" data-id="${esc(c.id)}" data-status="missed">Missed</button>
+            </div>` : ""}
+          </div>`;
+      }).join("") : `<p class="muted" style="font-size:.85rem">${isMine ? "No goals yet." : name + " hasn't added goals yet."}</p>`;
+
+      return `
+        <div class="card">
+          <h2>${esc(name)}</h2>
+          ${goalsHtml}
+          ${isMine ? `<div style="margin-top:10px"><button class="btn btn-sm" data-action="add-goal">+ Add goal</button></div>` : ""}
+        </div>`;
+    }
+
+    function statusPill(st) {
+      if (st === "on_track") return `<span class="pill pill-on">On track</span>`;
+      if (st === "partial")  return `<span class="pill pill-part">Partial</span>`;
+      if (st === "missed")   return `<span class="pill pill-miss">Missed</span>`;
+      return `<span class="pill pill-none">Not logged</span>`;
+    }
+
+    function renderSupport(unread) {
+      const thread = messages.slice(-30).map((m) => {
+        const mine = m.sender_id === myId();
+        const sos = typeof m.content === "string" && m.content.startsWith(SOS_PREFIX);
+        return `
+          <div class="msg ${sos ? "sos" : ""}">
+            <div class="msg-meta muted">${mine ? "You" : esc(memberName(m.sender_id))} · ${esc(formatRelativeDate ? formatRelativeDate(m.sent_at) : m.sent_at)}</div>
+            <div class="msg-body">${esc(m.content)}</div>
+          </div>`;
+      }).join("") || `<p class="muted" style="font-size:.85rem">No messages yet. Send your partner some encouragement.</p>`;
+
+      return `
+        <div class="card">
+          <div class="row between">
+            <h2>Support ${unread ? `<span class="pill pill-miss">${unread} new</span>` : ""}</h2>
+            <span class="row" style="gap:6px">
+              <button class="btn btn-sm" data-action="compose">Encourage</button>
+              <button class="btn btn-sm btn-sos" data-action="sos">SOS</button>
+            </span>
+          </div>
+          <div style="margin-top:8px">${thread}</div>
+        </div>`;
+    }
+
+    function renderAlertCard() {
+      const armed = myProfile && Number(myProfile.active) === 1;
+      const hrs = myProfile?.interval_hours ?? 48;
+      const upgrade = ME && !alertStatus.entitled;
+      return `
+        <div class="card">
+          <div class="row between">
+            <h2>Missed check-in alert</h2>
+            <button class="btn btn-sm" data-action="alert-settings">${armed ? "Edit" : "Set up"}</button>
+          </div>
+          <p class="muted" style="font-size:.85rem;margin:6px 0 0">
+            ${armed
+              ? `On — if you go quiet for ${esc(String(hrs))}h, ${esc(partner()?.name ?? "your partner")} gets an email.`
+              : `Off — turn this on to alert ${esc(partner()?.name ?? "your partner")} if you go silent.`}
+          </p>
+          ${upgrade ? `<p class="muted" style="font-size:.8rem;margin-top:6px">⚡ Email alerts need the hub's cron + email add-on for your household. You can still set it up now; alerts start once it's unlocked.</p>` : ""}
+        </div>`;
+    }
+
+    // ── Actions ────────────────────────────────────────────────────────────
+    async function savePartner() {
+      const sel = document.querySelector('#partner-list input[type="radio"]:checked');
+      if (!sel) return;
+      const chosen = sel.value;
+      const btn = document.querySelector('[data-action="save-partner"]');
+      if (btn) { btn.disabled = true; btn.textContent = "Saving…"; }
+      try {
+        if (ME) {
+          const res = await fetch(`/run/${APP_ID}/api/partner`, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ partner_id: chosen }),
+          });
+          if (!res.ok) throw new Error((await res.json()).error ?? "Could not save partner");
+          const s = await res.json();
+          partnerId = s.partner_id ?? chosen;
+          partnerReciprocal = !!s.reciprocal;
+        } else { partnerId = chosen; partnerReciprocal = true; }
+        if (partnerReciprocal) await loadData();
+        render();
+      } catch (e) {
+        if (btn) { btn.disabled = false; btn.textContent = "Connect"; }
+        await hubAlert(e.message);
+      }
+    }
+
+    async function logCheckin(commitmentId, status) {
+      const today = dateKey();
+      const existing = checkins.find((c) => c.member_id === myId() && c.commitment_id === commitmentId && c.check_date === today);
+      const prevStreak = computeStreak(checkins, commitmentId, today);
+      const now = new Date().toISOString();
+
+      if (existing) {
+        if (ME) await db("UPDATE app_accountability_partner__checkins SET status = ? WHERE id = ?", [status, existing.id]);
+        existing.status = status;
+      } else {
+        const id = crypto.randomUUID();
+        if (ME) await db(
+          "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+          [id, myId(), commitmentId, today, status, "", now]);
+        checkins.push({ id, member_id: myId(), commitment_id: commitmentId, check_date: today, status, note: "", created_at: now });
+      }
+      render();
+
+      const newStreak = computeStreak(checkins, commitmentId, today);
+      const milestone = status !== "missed" ? milestoneReached(prevStreak, newStreak) : null;
+      const commitment = commitments.find((c) => c.id === commitmentId);
+
+      // Side effects — fire-and-forget, never block the UI.
+      Promise.allSettled([
+        // Stamp the inactivity switch so a "you went silent" email won't fire.
+        myProfile ? fetch(`/run/${APP_ID}/api/check-in`, { method: "POST" }).catch(() => {}) : Promise.resolve(),
+        // Publish for cross-app consumers (streaks/leaderboard).
+        ME ? fetch(EVENTS_URL, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ source_app_id: APP_ID, type: "accountability.checkin_logged", subject_id: myId(),
+            payload: { commitment_id: commitmentId, status, streak: newStreak } }),
+        }).catch(() => {}) : Promise.resolve(),
+        // Notify the partner on a kept check-in or a milestone.
+        (ME && partnerId && status !== "missed") ? sendHubNotification({
+          title: milestone ? `🎉 ${ME.name} hit a ${milestone}-day streak!` : `${ME.name} checked in`,
+          body: milestone ? `${commitment?.title ?? "a goal"} — ${milestone} days strong.` : `${commitment?.title ?? "Checked in"} · ${newStreak}-day streak`,
+          audience: [partnerId],
+          url: hubAppUrl(APP_ID),
+        }).catch(() => {}) : Promise.resolve(),
+        (ME && milestone) ? fetch(EVENTS_URL, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ source_app_id: APP_ID, type: "accountability.milestone", subject_id: myId(),
+            payload: { commitment_id: commitmentId, streak: newStreak, milestone } }),
+        }).catch(() => {}) : Promise.resolve(),
+      ]);
+    }
+
+    function goalModal(existing) {
+      const c = existing ?? { title: "", detail: "", cadence: "daily", target_per_week: 7 };
+      openModal(`
+        <h3>${existing ? "Edit goal" : "New goal"}</h3>
+        <label>Goal</label>
+        <input type="text" id="g-title" maxlength="120" value="${esc(c.title)}" placeholder="e.g. Stay sober today" />
+        <label>Details (optional)</label>
+        <input type="text" id="g-detail" maxlength="240" value="${esc(c.detail)}" />
+        <label>Cadence</label>
+        <select id="g-cadence">
+          <option value="daily"  ${c.cadence === "daily" ? "selected" : ""}>Daily</option>
+          <option value="weekly" ${c.cadence === "weekly" ? "selected" : ""}>Weekly target</option>
+        </select>
+        <label>Target per week</label>
+        <input type="number" id="g-target" min="1" max="7" value="${esc(String(c.target_per_week))}" />
+        <div class="modal-actions">
+          <button class="btn" data-action="close-modal">Cancel</button>
+          <button class="btn btn-primary" data-action="save-goal" data-id="${esc(existing?.id ?? "")}">Save</button>
+        </div>
+      `);
+      document.getElementById("g-title").focus();
+    }
+
+    async function saveGoal(existingId) {
+      const title = document.getElementById("g-title").value.trim();
+      if (!title) { document.getElementById("g-title").focus(); return; }
+      const detail = document.getElementById("g-detail").value.trim();
+      const cadence = document.getElementById("g-cadence").value === "weekly" ? "weekly" : "daily";
+      let target = parseInt(document.getElementById("g-target").value, 10);
+      if (!Number.isFinite(target) || target < 1) target = 1;
+      if (target > 7) target = 7;
+      const now = new Date().toISOString();
+      const btn = modalEl?.querySelector('[data-action="save-goal"]');
+      if (btn) { btn.disabled = true; btn.textContent = "Saving…"; }
+
+      try {
+        if (existingId) {
+          if (ME) await db(
+            "UPDATE app_accountability_partner__commitments SET title = ?, detail = ?, cadence = ?, target_per_week = ?, updated_at = ? WHERE id = ?",
+            [title, detail, cadence, target, now, existingId]);
+          const c = commitments.find((x) => x.id === existingId);
+          if (c) Object.assign(c, { title, detail, cadence, target_per_week: target });
+        } else {
+          const id = crypto.randomUUID();
+          if (ME) await db(
+            "INSERT INTO app_accountability_partner__commitments (id, member_id, title, detail, cadence, target_per_week, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)",
+            [id, myId(), title, detail, cadence, target, now, now]);
+          commitments.unshift({ id, member_id: myId(), title, detail, cadence, target_per_week: target, active: 1, created_at: now });
+        }
+        closeModal();
+        render();
+      } catch (e) {
+        if (btn) { btn.disabled = false; btn.textContent = "Save"; }
+        await hubAlert(e.message);
+      }
+    }
+
+    async function archiveGoal(id) {
+      if (!(await hubConfirm({ message: "Archive this goal?", description: "It stops showing and its streak pauses. This can't be undone here." }))) return;
+      if (ME) await db("UPDATE app_accountability_partner__commitments SET active = 0 WHERE id = ?", [id]).catch(() => {});
+      const c = commitments.find((x) => x.id === id);
+      if (c) c.active = 0;
+      render();
+    }
+
+    function composeModal() {
+      openModal(`
+        <h3>Encourage ${esc(partner()?.name ?? "your partner")}</h3>
+        <textarea id="msg-text" rows="4" maxlength="1000" placeholder="Say something supportive…"></textarea>
+        <div class="modal-actions">
+          <button class="btn" data-action="close-modal">Cancel</button>
+          <button class="btn btn-primary" data-action="send-msg">Send</button>
+        </div>
+      `);
+      document.getElementById("msg-text").focus();
+    }
+
+    async function sendMessage(content, { sos = false } = {}) {
+      const text = (sos ? SOS_PREFIX : "") + content.trim();
+      if (!content.trim()) return;
+      const btn = modalEl?.querySelector(".btn-primary");
+      if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+      try {
+        if (ME) {
+          const res = await fetch(`/run/${APP_ID}/api/paired-message`, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "send", content: text }),
+          });
+          if (!res.ok) throw new Error((await res.json()).error ?? "Could not send");
+        }
+        messages.push({ id: crypto.randomUUID(), sender_id: myId(), recipient_id: partnerId, content: text, sent_at: new Date().toISOString(), read_at: null });
+        closeModal();
+        render();
+        // Drive the push ourselves so SOS gets urgent copy, notes get gentle copy.
+        if (ME && partnerId) sendHubNotification({
+          title: sos ? `🆘 ${ME.name} needs support` : `💬 ${ME.name} sent encouragement`,
+          body: sos ? "Your accountability partner reached out. Please check in with them." : content.trim().slice(0, 120),
+          audience: [partnerId],
+          url: hubAppUrl(APP_ID),
+        }).catch(() => {});
+      } catch (e) {
+        if (btn) { btn.disabled = false; btn.textContent = "Send"; }
+        await hubAlert(e.message);
+      }
+    }
+
+    async function sos() {
+      const ok = await hubConfirm({
+        message: `Send an SOS to ${partner()?.name ?? "your partner"}?`,
+        description: "They'll get an urgent notification that you're reaching out for support right now.",
+        confirmLabel: "Send SOS",
+      });
+      if (!ok) return;
+      await sendMessage("I'm struggling and could use your support right now.", { sos: true });
+    }
+
+    function alertModal() {
+      const hrs = myProfile?.interval_hours ?? 48;
+      const armed = myProfile && Number(myProfile.active) === 1;
+      openModal(`
+        <h3>Missed check-in alert</h3>
+        <p class="muted" style="font-size:.85rem">If you don't check in for this long, ${esc(partner()?.name ?? "your partner")} gets an email so they can reach out.</p>
+        <label>Alert after (hours of silence)</label>
+        <input type="number" id="a-hours" min="6" max="336" value="${esc(String(hrs))}" />
+        <label>Note to include (optional)</label>
+        <input type="text" id="a-msg" maxlength="200" value="${esc(myProfile?.message ?? "")}" placeholder="e.g. Please call me if you don't hear from me." />
+        <div class="modal-actions">
+          ${armed ? `<button class="btn" data-action="disable-alert">Turn off</button>` : ""}
+          <button class="btn" data-action="close-modal">Cancel</button>
+          <button class="btn btn-primary" data-action="save-alert">${armed ? "Update" : "Turn on"}</button>
+        </div>
+      `);
+    }
+
+    async function saveAlert() {
+      let hrs = parseInt(document.getElementById("a-hours").value, 10);
+      if (!Number.isFinite(hrs) || hrs < 6) hrs = 6;
+      if (hrs > 336) hrs = 336;
+      const msg = document.getElementById("a-msg").value.trim();
+      const now = new Date().toISOString();
+      const recipients = JSON.stringify(partnerId ? [partnerId] : []);
+      const btn = modalEl?.querySelector('[data-action="save-alert"]');
+      if (btn) { btn.disabled = true; btn.textContent = "Saving…"; }
+      try {
+        if (myProfile) {
+          if (ME) await db(
+            "UPDATE app_accountability_partner__profiles SET active = 1, interval_hours = ?, message = ?, recipient_member_ids = ?, updated_at = ? WHERE id = ?",
+            [hrs, msg, recipients, now, myProfile.id]);
+          Object.assign(myProfile, { active: 1, interval_hours: hrs, message: msg, recipient_member_ids: recipients });
+        } else {
+          const id = crypto.randomUUID();
+          if (ME) await db(
+            "INSERT INTO app_accountability_partner__profiles (id, member_id, active, interval_hours, message, recipient_member_ids, created_at, updated_at) VALUES (?, ?, 1, ?, ?, ?, ?, ?)",
+            [id, myId(), hrs, msg, recipients, now, now]);
+          myProfile = { id, member_id: myId(), active: 1, interval_hours: hrs, message: msg, recipient_member_ids: recipients, last_checkin_at: null };
+        }
+        // Stamp an initial check-in so the window starts now (ignore capability 402).
+        if (ME) fetch(`/run/${APP_ID}/api/check-in`, { method: "POST" }).catch(() => {});
+        closeModal();
+        await loadAlertStatus();
+        render();
+      } catch (e) {
+        if (btn) { btn.disabled = false; btn.textContent = "Turn on"; }
+        await hubAlert(e.message);
+      }
+    }
+
+    async function disableAlert() {
+      if (myProfile && ME) await db("UPDATE app_accountability_partner__profiles SET active = 0 WHERE id = ?", [myProfile.id]).catch(() => {});
+      if (myProfile) myProfile.active = 0;
+      closeModal();
+      render();
+    }
+
+    async function markRead() {
+      if (!ME || !messages.some((m) => m.recipient_id === myId() && !m.read_at)) return;
+      const now = new Date().toISOString();
+      messages = messages.map((m) => (m.recipient_id === myId() && !m.read_at ? { ...m, read_at: now } : m));
+      fetch(`/run/${APP_ID}/api/paired-message`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "mark_read" }),
+      }).catch(() => {});
+    }
+
+    // ── Modal + event delegation ───────────────────────────────────────────
+    function openModal(html) {
+      closeModal();
+      modalEl = document.createElement("div");
+      modalEl.className = "modal-backdrop";
+      modalEl.innerHTML = `<div class="modal">${html}</div>`;
+      modalEl.addEventListener("click", (e) => { if (e.target === modalEl) closeModal(); });
+      document.body.appendChild(modalEl);
+    }
+    function closeModal() { modalEl?.remove(); modalEl = null; }
+
+    document.addEventListener("click", (e) => {
+      const el = e.target.closest("[data-action]");
+      if (!el) return;
+      const { action, id, status } = el.dataset;
+      switch (action) {
+        case "save-partner":   savePartner(); break;
+        case "add-goal":       goalModal(null); break;
+        case "edit-goal":      goalModal(commitments.find((c) => c.id === id)); break;
+        case "save-goal":      saveGoal(id || null); break;
+        case "archive-goal":   archiveGoal(id); break;
+        case "checkin":        logCheckin(id, status); break;
+        case "compose":        composeModal(); break;
+        case "send-msg":       sendMessage(document.getElementById("msg-text")?.value ?? ""); break;
+        case "sos":            sos(); break;
+        case "alert-settings": alertModal(); break;
+        case "save-alert":     saveAlert(); break;
+        case "disable-alert":  disableAlert(); break;
+        case "close-modal":    closeModal(); break;
+      }
+    });
+
+    // ── Init ───────────────────────────────────────────────────────────────
+    (async () => {
+      await loadMembers();
+      await loadPartner();
+      if (partnerId && partnerReciprocal) {
+        await Promise.all([loadData(), loadAlertStatus()]);
+      }
+      render();
+      markRead();
+    })();
+  </script>
+</body>
+</html>

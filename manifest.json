@@ -1,0 +1,114 @@
+{
+  "id": "accountability-partner",
+  "name": "Accountability Partner",
+  "version": "1.0.0",
+  "description": "Pair up with one accountability partner — a sponsor, a sobriety or fitness buddy, a goal-keeping friend — and support each other. Set your own commitments, check in daily, keep a shared streak, send encouragement, reach out with an SOS when you're struggling, and get alerted if your partner goes quiet.",
+  "entrypoint": "index.html",
+  "runtime": "static",
+  "icon": "🤝",
+  "category": "wellness",
+  "tags": ["accountability", "sobriety", "recovery", "goals", "wellness", "support", "habits"],
+  "data_access": {
+    "reads": ["family.members"],
+    "writes": []
+  },
+  "permissions": {
+    "default_audience": "adults",
+    "requires_approval": false
+  },
+  "storage": "db",
+  "db_plaintext_columns": ["active", "interval_hours"],
+  "required_capabilities": ["cron", "email"],
+  "partner_link": {
+    "table": "partner_config",
+    "member_column": "member_id",
+    "partner_id_column": "partner_id",
+    "session_id_column": "session_id",
+    "require_role": "adult"
+  },
+  "row_policies": {
+    "partner_config": {
+      "kind": "owner_only",
+      "member_column": "member_id",
+      "adults_bypass": false,
+      "endpoint_writes_only": true
+    },
+    "commitments": {
+      "kind": "couple_scoped",
+      "self_column": "member_id",
+      "participant_columns": ["member_id"],
+      "partner_table": "partner_config",
+      "partner_member_column": "member_id",
+      "partner_id_column": "partner_id",
+      "require_reciprocal": true,
+      "delete_owner_only": true
+    },
+    "checkins": {
+      "kind": "couple_scoped",
+      "self_column": "member_id",
+      "participant_columns": ["member_id"],
+      "partner_table": "partner_config",
+      "partner_member_column": "member_id",
+      "partner_id_column": "partner_id",
+      "require_reciprocal": true,
+      "delete_owner_only": true,
+      "unique_per_member": {
+        "member_column": "member_id",
+        "scope_columns": ["commitment_id", "check_date"]
+      }
+    },
+    "messages": {
+      "kind": "couple_scoped",
+      "self_column": "sender_id",
+      "participant_columns": ["sender_id", "recipient_id"],
+      "partner_table": "partner_config",
+      "partner_member_column": "member_id",
+      "partner_id_column": "partner_id",
+      "session_column": "session_id",
+      "partner_session_id_column": "session_id",
+      "require_reciprocal": true,
+      "endpoint_writes_only": true
+    },
+    "profiles": {
+      "kind": "owner_only",
+      "member_column": "member_id",
+      "adults_bypass": false
+    }
+  },
+  "paired_messages": {
+    "table": "messages",
+    "id_column": "id",
+    "sender_column": "sender_id",
+    "recipient_column": "recipient_id",
+    "content_column": "content",
+    "sent_at_column": "sent_at",
+    "read_at_column": "read_at",
+    "partner_table": "partner_config",
+    "partner_member_column": "member_id",
+    "partner_id_column": "partner_id",
+    "partner_session_id_column": "session_id",
+    "session_id_column": "session_id",
+    "require_reciprocal": true,
+    "max_length": 1000
+  },
+  "inactivity_alerts": {
+    "table": "profiles",
+    "member_column": "member_id",
+    "id_column": "id",
+    "active_column": "active",
+    "interval_hours_column": "interval_hours",
+    "last_checkin_column": "last_checkin_at",
+    "last_alerted_column": "last_alerted_at",
+    "message_column": "message",
+    "recipients_column": "recipient_member_ids"
+  },
+  "publishes": ["accountability.checkin_logged", "accountability.milestone"],
+  "publish_acls": {
+    "accountability.checkin_logged": { "require_role": "adult" },
+    "accountability.milestone": { "require_role": "adult" }
+  },
+  "nav": { "label": "Accountability" },
+  "resource_limits": {
+    "max_db_bytes": 52428800
+  }
+}
