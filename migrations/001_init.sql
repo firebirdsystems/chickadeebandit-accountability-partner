@@ -9,7 +9,7 @@
 --     and their reciprocal partner both read them, INSERT forces member_id to the
 --     caller (so you can only log your OWN check-ins / create your OWN goals), and
 --     delete_owner_only keeps each person's rows deletable only by their author.
---     checkins additionally uses unique_per_member so there is at most one
+--     checkins additionally uses max_per_member so there is at most one
 --     check-in per commitment per calendar day.
 --   * messages is couple_scoped + endpoint_writes_only: written only by the
 --     trusted paired_messages endpoint (/api/paired-message), which stamps the

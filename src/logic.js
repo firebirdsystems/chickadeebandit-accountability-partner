@@ -24,7 +24,7 @@ export function dayBefore(from, offset) {
 
 /**
  * Map of check_date -> status for one commitment. When a day somehow has more
- * than one row (it shouldn't — unique_per_member prevents it), the latest by
+ * than one row (it shouldn't — max_per_member prevents it), the latest by
  * created_at wins.
  */
 export function statusByDate(checkins, commitmentId) {

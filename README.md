@@ -31,7 +31,7 @@ All confidentiality/integrity is enforced by `row_policies`, never the client:
   partners read them; `INSERT` forces `member_id` to the caller (you can only log
   your own check-ins / create your own goals); `delete_owner_only` keeps each
   person's rows deletable only by their author; `checkins` adds
-  `unique_per_member` (one per commitment per day).
+  `max_per_member` (one per commitment per day).
 - `messages` — `couple_scoped` + `endpoint_writes_only`; the `paired_messages`
   endpoint is the only writer (stamps sender/time/read receipts).
 - `profiles` — `owner_only` (`adults_bypass:false`); each member owns their own
@@ -49,6 +49,6 @@ npm test         # pure-logic unit tests (src/logic.js)
 npm run build    # writes dist/bundle.json
 ```
 
-Behavioral `scenarios.json` covers couple scoping, `unique_per_member`, the
+Behavioral `scenarios.json` covers couple scoping, `max_per_member`, the
 `endpoint_writes_only` tables, and `owner_only` profile isolation; the hub's
 nightly app-exercise suite replays it against the published bundle.

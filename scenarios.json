@@ -27,7 +27,7 @@
       ]
     },
     {
-      "name": "unique_per_member allows at most one check-in per commitment per day",
+      "name": "max_per_member allows at most one check-in per commitment per day",
       "members": { "me": "adult", "partner": "adult" },
       "steps": [
         { "action": "seedRaw", "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)", "params": ["{{me}}", "{{partner}}", "s1"] },

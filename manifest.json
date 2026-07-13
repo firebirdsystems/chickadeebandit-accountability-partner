@@ -52,10 +52,12 @@
       "partner_id_column": "partner_id",
       "require_reciprocal": true,
       "delete_owner_only": true,
-      "unique_per_member": {
+      "max_per_member": {
         "member_column": "member_id",
-        "scope_columns": ["commitment_id", "check_date"]
-      }
+        "scope_columns": ["commitment_id", "check_date"],
+        "limit": 1
+      },
+      "retain_days": { "default": 365, "timestamp_column": "created_at", "override_key": "checkin_history" }
     },
     "messages": {
       "kind": "couple_scoped",
@@ -67,7 +69,8 @@
       "session_column": "session_id",
       "partner_session_id_column": "session_id",
       "require_reciprocal": true,
-      "endpoint_writes_only": true
+      "endpoint_writes_only": true,
+      "retain_days": { "default": 365, "timestamp_column": "sent_at", "override_key": "message_history" }
     },
     "profiles": {
       "kind": "owner_only",
