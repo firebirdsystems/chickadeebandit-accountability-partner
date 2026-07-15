@@ -309,7 +309,7 @@
               <button class="btn btn-sm ${st === "missed" ? "btn-primary" : ""}" data-action="checkin" data-id="${esc(c.id)}" data-status="missed">Missed</button>
             </div>` : ""}
           </div>`;
-      }).join("") : `<p class="muted" style="font-size:.85rem">${isMine ? "No goals yet." : name + " hasn't added goals yet."}</p>`;
+      }).join("") : `<p class="muted" style="font-size:.85rem">${isMine ? "No goals yet." : esc(name) + " hasn't added goals yet."}</p>`;
 
       return `
         <div class="card">
