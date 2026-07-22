@@ -1,5 +1,6 @@
 {
   "id": "accountability-partner",
+  "contexts": ["household", "shared_space"],
   "name": "Accountability Partner",
   "version": "1.0.0",
   "description": "Pair up with one accountability partner — a sponsor, a sobriety or fitness buddy, a goal-keeping friend — and support each other. Set your own commitments, check in daily, keep a shared streak, send encouragement, reach out with an SOS when you're struggling, and get alerted if your partner goes quiet.",
