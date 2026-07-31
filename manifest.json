@@ -79,6 +79,28 @@
       "adults_bypass": false
     }
   },
+  "member_references": {
+    "partner_config": [
+      { "column": "member_id", "on_removed": "delete", "id_column": "member_id" },
+      { "column": "partner_id", "on_removed": "delete", "id_column": "member_id" }
+    ],
+    "commitments": {
+      "column": "member_id",
+      "on_removed": "delete",
+      "dependent_tables": [
+        { "table": "checkins", "foreign_key": "commitment_id" }
+      ]
+    },
+    "checkins": { "column": "member_id", "on_removed": "delete" },
+    "messages": [
+      { "column": "sender_id", "on_removed": "keep" },
+      { "column": "recipient_id", "on_removed": "keep" }
+    ],
+    "profiles": [
+      { "column": "member_id", "on_removed": "delete" },
+      { "column": "recipient_member_ids", "on_removed": "prune_list" }
+    ]
+  },
   "paired_messages": {
     "table": "messages",
     "id_column": "id",
