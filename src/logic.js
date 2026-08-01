@@ -92,6 +92,16 @@ export function isOverdue(lastCheckinIso, intervalHours = 48, now = new Date()) 
   return now.getTime() - then > intervalHours * 3_600_000;
 }
 
+/**
+ * Fields the in-app search matches against (see hub-sdk `searchMatch`). The
+ * support thread only ever renders the most recent messages, so search is the
+ * only way an older one is reachable at all. The sender's name is passed in
+ * rather than read off the row, because the row carries an id, not a name.
+ */
+export function searchableFields(message, senderName = "") {
+  return [message.content, senderName];
+}
+
 /** Milestone reached when a streak crosses one of these day counts. */
 export const MILESTONES = [3, 7, 14, 30, 60, 90, 180, 365];
 export function milestoneReached(previousStreak, newStreak) {

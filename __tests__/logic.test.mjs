@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   isKept,
+  searchableFields,
   dateKey,
   dayBefore,
   statusForDay,
@@ -110,5 +111,16 @@ describe("milestoneReached", () => {
     expect(milestoneReached(2, 3)).toBe(3);
     expect(milestoneReached(7, 8)).toBe(null);
     expect(milestoneReached(29, 45)).toBe(30); // first crossed milestone
+  });
+});
+
+describe("searchableFields", () => {
+  it("matches on the message body, not just the sender", () => {
+    expect(searchableFields({ content: "proud of you for the gym run" }, "Sam"))
+      .toContain("proud of you for the gym run");
+  });
+
+  it("includes the sender name, which the row itself only carries as an id", () => {
+    expect(searchableFields({ content: "hi", sender_id: "m1" }, "Sam")).toContain("Sam");
   });
 });

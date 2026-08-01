@@ -75,6 +75,13 @@
     .msg:first-child { border-top: 0; }
     .msg-meta { font-size: .76rem; }
     .msg.sos .msg-body { color: #b91c1c; font-weight: 600; }
+    .search-row { margin: 10px 0 0; }
+    .search-input {
+      width: 100%; padding: 8px 10px; border: 1px solid var(--hub-border, #e5e7eb);
+      border-radius: 8px; font: inherit; background: var(--hub-surface, #fff);
+      color: var(--hub-text, #1f2937);
+    }
+    .search-input:focus { outline: none; border-color: var(--hub-accent, #6366f1); }
     input[type="text"], input[type="number"], textarea, select {
       width: 100%; padding: 8px; border: 1px solid var(--hub-border, #e5e7eb);
       border-radius: 8px; font: inherit; background: var(--hub-surface, #fff);
@@ -105,11 +112,11 @@
   <script type="module">
     import {
       memberColor, initial, esc, hubConfirm, hubAlert,
-      sendHubNotification, hubAppUrl, formatRelativeDate,
+      sendHubNotification, hubAppUrl, formatRelativeDate, searchMatch,
     } from "/hub-sdk.js";
     import {
       dateKey, statusForDay, computeStreak, weeklyKept,
-      isOverdue, daysSince, milestoneReached,
+      isOverdue, daysSince, milestoneReached, searchableFields,
     } from "./logic.js";
 
     const CONTEXT    = window.__CONTEXT_URL    ?? "";
@@ -128,6 +135,7 @@
     let commitments = [];   // me + partner
     let checkins = [];      // me + partner
     let messages = [];      // both directions
+    let searchQ = "";       // in-app search over the support thread
     let myProfile = null;   // my alert switch row (owner_only)
     let alertStatus = { entitled: false, missing_capabilities: [], last_checkin_at: null };
     let modalEl = null;
@@ -326,8 +334,18 @@
       return `<span class="pill pill-none">Not logged</span>`;
     }
 
-    function renderSupport(unread) {
-      const thread = messages.slice(-30).map((m) => {
+    // Unsearched, the thread shows only the recent tail; a search looks across
+    // every message, which is the point of having it here.
+    function renderThread() {
+      const matched = searchQ
+        ? messages.filter((m) => searchMatch(searchQ, searchableFields(m, memberName(m.sender_id))))
+        : messages.slice(-30);
+      if (!matched.length) {
+        return searchQ
+          ? `<p class="muted" style="font-size:.85rem">No messages match "${esc(searchQ)}".</p>`
+          : `<p class="muted" style="font-size:.85rem">No messages yet. Send your partner some encouragement.</p>`;
+      }
+      return matched.map((m) => {
         const mine = m.sender_id === myId();
         const sos = typeof m.content === "string" && m.content.startsWith(SOS_PREFIX);
         return `
@@ -335,8 +353,10 @@
             <div class="msg-meta muted">${mine ? "You" : esc(memberName(m.sender_id))} · ${esc(formatRelativeDate ? formatRelativeDate(m.sent_at) : m.sent_at)}</div>
             <div class="msg-body">${esc(m.content)}</div>
           </div>`;
-      }).join("") || `<p class="muted" style="font-size:.85rem">No messages yet. Send your partner some encouragement.</p>`;
+      }).join("");
+    }
 
+    function renderSupport(unread) {
       return `
         <div class="card">
           <div class="row between">
@@ -346,7 +366,12 @@
               <button class="btn btn-sm btn-sos" data-action="sos">SOS</button>
             </span>
           </div>
-          <div style="margin-top:8px">${thread}</div>
+          ${messages.length ? `
+          <div class="search-row">
+            <input id="support-search" class="search-input" type="search" placeholder="Search messages…"
+              aria-label="Search messages" value="${esc(searchQ)}" />
+          </div>` : ""}
+          <div id="support-thread" style="margin-top:8px">${renderThread()}</div>
         </div>`;
     }
 
@@ -636,6 +661,14 @@
       document.body.appendChild(modalEl);
     }
     function closeModal() { modalEl?.remove(); modalEl = null; }
+
+    // Re-render only the thread on each keystroke so the search box keeps focus.
+    document.addEventListener("input", (e) => {
+      if (e.target.id !== "support-search") return;
+      searchQ = e.target.value;
+      const thread = document.getElementById("support-thread");
+      if (thread) thread.innerHTML = renderThread();
+    });
 
     document.addEventListener("click", (e) => {
       const el = e.target.closest("[data-action]");
