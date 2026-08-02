@@ -133,6 +133,21 @@
     "accountability.checkin_logged": { "require_role": "adult" },
     "accountability.milestone": { "require_role": "adult" }
   },
+  "agenda": {
+    "kind": "task",
+    "label": "Commitment",
+    "source": {
+      "kind": "sql",
+      "query": "SELECT c.id AS id, c.title AS title, :today AS when_at, c.member_id AS member_id, NULLIF(c.detail, '') AS subtitle, CASE WHEN k.id IS NULL THEN 0 ELSE 1 END AS done FROM app_accountability_partner__commitments c LEFT JOIN app_accountability_partner__checkins k ON k.commitment_id = c.id AND k.member_id = :me AND k.check_date = :today WHERE c.active = 1 AND c.member_id = :me ORDER BY c.created_at LIMIT 20"
+    }
+  },
+  "glance": {
+    "source": {
+      "kind": "sql",
+      "query": "SELECT COUNT(*) AS n FROM app_accountability_partner__commitments c LEFT JOIN app_accountability_partner__checkins k ON k.commitment_id = c.id AND k.member_id = :me AND k.check_date = :today WHERE c.active = 1 AND c.member_id = :me AND k.id IS NULL LIMIT 1"
+    },
+    "display": { "template": "badge", "count": "n", "label": "check-ins still to log", "severity": "warn" }
+  },
   "nav": { "label": "Accountability" },
   "resource_limits": {
     "max_db_bytes": 52428800
