@@ -561,9 +561,14 @@
         closeModal();
         render();
         // Drive the push ourselves so SOS gets urgent copy, notes get gentle copy.
+        // The encouragement body is the member's own words, so it ships only to
+        // a partner who opted into notification previews; everyone else gets the
+        // substitute. The SOS copy is already generic and needs no substitute —
+        // and softening it would defeat the point of an SOS.
         if (ME && partnerId) sendHubNotification({
           title: sos ? `🆘 ${ME.name} needs support` : `💬 ${ME.name} sent encouragement`,
           body: sos ? "Your accountability partner reached out. Please check in with them." : content.trim().slice(0, 120),
+          ...(sos ? {} : { generic: { body: "Tap to read it." } }),
           audience: [partnerId],
           url: hubAppUrl(APP_ID),
         }).catch(() => {});
