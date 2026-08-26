@@ -18,6 +18,12 @@
     "requires_approval": false
   },
   "storage": "db",
+  "preload": {
+    "commitments": {"sql": "SELECT * FROM app_accountability_partner__commitments ORDER BY created_at DESC"},
+    "checkins": {"sql": "SELECT * FROM app_accountability_partner__checkins ORDER BY check_date DESC"},
+    "messages": {"sql": "SELECT * FROM app_accountability_partner__messages ORDER BY sent_at ASC"},
+    "profile": {"sql": "SELECT * FROM app_accountability_partner__profiles WHERE member_id = ? LIMIT 1", "params": [":me"]}
+  },
   "db_plaintext_columns": ["active", "interval_hours", "last_checkin_at", "last_alerted_at"],
   "required_capabilities": ["cron", "email"],
   "partner_link": {
