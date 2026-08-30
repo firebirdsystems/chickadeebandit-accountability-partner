@@ -1,0 +1,173 @@
+{
+  "scenarios": [
+    {
+      "name": "choosing a partner who has not chosen back waits instead of pairing",
+      "members": {
+        "a": "adult",
+        "b": "adult"
+      },
+      "steps": [
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)",
+          "params": [
+            "{{a}}",
+            "{{b}}",
+            "sess-ab"
+          ]
+        },
+        {
+          "action": "open",
+          "as": "a"
+        },
+        {
+          "action": "expectVisible",
+          "selector": "[data-testid=\"view-setup\"][data-waiting=\"yes\"]",
+          "as": "a"
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)",
+          "params": [
+            "{{b}}",
+            "{{a}}",
+            "sess-ab"
+          ]
+        },
+        {
+          "action": "reload",
+          "as": "a"
+        },
+        {
+          "action": "expectVisible",
+          "selector": "[data-testid=\"view-main\"]",
+          "as": "a"
+        }
+      ]
+    },
+    {
+      "name": "the partner's lane shows their goals but offers no way to check in on them",
+      "members": {
+        "a": "adult",
+        "b": "adult"
+      },
+      "steps": [
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)",
+          "params": [
+            "{{a}}",
+            "{{b}}",
+            "sess-ab"
+          ]
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)",
+          "params": [
+            "{{b}}",
+            "{{a}}",
+            "sess-ab"
+          ]
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_accountability_partner__commitments (id, member_id, title, detail, cadence, target_per_week, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          "params": [
+            "g1",
+            "{{a}}",
+            "Morning run",
+            "seeded detail",
+            "daily",
+            7,
+            1,
+            "2026-01-01T00:00:00Z",
+            "2026-01-01T00:00:00Z"
+          ]
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_accountability_partner__commitments (id, member_id, title, detail, cadence, target_per_week, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          "params": [
+            "g2",
+            "{{b}}",
+            "Evening reading",
+            "seeded detail",
+            "daily",
+            7,
+            1,
+            "2026-01-01T00:00:00Z",
+            "2026-01-01T00:00:00Z"
+          ]
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_accountability_partner__commitments (id, member_id, title, detail, cadence, target_per_week, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          "params": [
+            "g3",
+            "{{a}}",
+            "An archived goal",
+            "seeded detail",
+            "daily",
+            7,
+            0,
+            "2026-01-01T00:00:00Z",
+            "2026-01-01T00:00:00Z"
+          ]
+        },
+        {
+          "action": "open",
+          "as": "b"
+        },
+        {
+          "action": "expectText",
+          "selector": "[data-testid=\"goal\"][data-goal-id=\"g1\"]",
+          "text": "Morning run",
+          "as": "b"
+        },
+        {
+          "action": "expectCount",
+          "selector": "[data-testid=\"lane\"][data-mine=\"no\"] [data-testid=\"goal\"][data-goal-id=\"g1\"]",
+          "count": 1,
+          "as": "b"
+        },
+        {
+          "action": "expectCount",
+          "selector": "[data-testid=\"goal\"][data-goal-id=\"g1\"] [data-testid=\"checkin-btn\"]",
+          "count": 0,
+          "as": "b"
+        },
+        {
+          "action": "expectCount",
+          "selector": "[data-testid=\"goal\"][data-goal-id=\"g1\"] [data-testid=\"edit-goal\"]",
+          "count": 0,
+          "as": "b"
+        },
+        {
+          "action": "expectCount",
+          "selector": "[data-testid=\"goal\"][data-goal-id=\"g2\"] [data-testid=\"checkin-btn\"]",
+          "count": 3,
+          "as": "b"
+        },
+        {
+          "action": "expectCount",
+          "selector": "[data-testid=\"goal\"][data-goal-id=\"g2\"] [data-testid=\"edit-goal\"]",
+          "count": 1,
+          "as": "b"
+        },
+        {
+          "action": "expectCount",
+          "selector": "[data-testid=\"lane\"][data-mine=\"yes\"] [data-testid=\"goal\"][data-goal-id=\"g2\"]",
+          "count": 1,
+          "as": "b"
+        },
+        {
+          "action": "expectCount",
+          "selector": "[data-testid=\"goal\"][data-goal-id=\"g3\"]",
+          "count": 0,
+          "as": "b"
+        }
+      ]
+    }
+  ]
+}
