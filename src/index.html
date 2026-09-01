@@ -112,10 +112,10 @@
   <script type="module">
     import {
       memberColor, initial, esc, hubConfirm, hubAlert,
-      sendHubNotification, hubAppUrl, formatRelativeDate, searchMatch,
+      sendHubNotification, hubAppUrl, formatRelativeDate, searchMatch, hubToday,
     } from "/hub-sdk.js";
     import {
-      dateKey, statusForDay, computeStreak, weeklyKept,
+      statusForDay, computeStreak, weeklyKept,
       isOverdue, daysSince, milestoneReached, searchableFields,
     } from "./logic.js";
 
@@ -186,10 +186,28 @@
 
     async function loadData() {
       if (!ME) { seedDemo(); return; }
+      // Windows bound the per-launch scan. Checkins use 365 days to match the
+      // table's retention default, so streaks and weekly counts are unchanged
+      // for any household that hasn't extended `checkin_history`; messages use
+      // 120 days — the thread, unread badge, and search cover a season, and
+      // retention deletes at 365 anyway. The date param is the household-local
+      // day so the hub's `:today` preload binding matches this text.
       const [c, k, m, p] = await Promise.all([
         db("SELECT * FROM app_accountability_partner__commitments ORDER BY created_at DESC").catch(() => ({ rows: [] })),
-        db("SELECT * FROM app_accountability_partner__checkins ORDER BY check_date DESC").catch(() => ({ rows: [] })),
-        db("SELECT * FROM app_accountability_partner__messages ORDER BY sent_at ASC").catch(() => ({ rows: [] })),
+        // hubToday(), not hubToday(): the hub binds `:today` to the HOUSEHOLD-local
+        // date while hubToday() reads the viewer device's clock, so around midnight
+        // or across timezones the params disagree and these preloads silently stop
+        // answering. hubToday() is the client half of the `:today` contract. The
+        // day keys the streak logic builds stay on hubToday() — only the preload
+        // boundary has to agree with the hub.
+        db("SELECT * FROM app_accountability_partner__checkins WHERE check_date >= date(?, '-365 days') ORDER BY check_date DESC", [hubToday()]).catch(() => ({ rows: [] })),
+        // The window matches the messages table's own retain_days (365), deliberately.
+        // A tighter window would not bound anything retention does not already
+        // bound, and there is no "load older" path here — so a 120-day window
+        // simply hid eight months of a conversation the platform was still
+        // storing, and narrowed the message search to match, with nothing on
+        // screen saying so.
+        db("SELECT * FROM app_accountability_partner__messages WHERE sent_at >= date(?, '-365 days') ORDER BY sent_at ASC", [hubToday()]).catch(() => ({ rows: [] })),
         db("SELECT * FROM app_accountability_partner__profiles WHERE member_id = ? LIMIT 1", [myId()]).catch(() => ({ rows: [] })),
       ]);
       commitments = c.rows;
@@ -207,8 +225,8 @@
     }
 
     function seedDemo() {
-      const today = dateKey();
-      const y = (n) => { const d = new Date(); d.setDate(d.getDate() - n); return dateKey(d); };
+      const today = hubToday();
+      const y = (n) => { const d = new Date(); d.setDate(d.getDate() - n); return hubToday(d); };
       commitments = [
         { id: "c-me", member_id: "demo-me", title: "Stay sober today", detail: "One day at a time.", cadence: "daily", target_per_week: 7, active: 1, created_at: y(20) },
         { id: "c-p",  member_id: "demo-partner", title: "Gym 4× / week", detail: "", cadence: "weekly", target_per_week: 4, active: 1, created_at: y(15) },
@@ -293,7 +311,7 @@
 
     function renderLane(id, isMine) {
       const goals = activeCommitmentsFor(id);
-      const today = dateKey();
+      const today = hubToday();
       const name = isMine ? "You" : memberName(id);
       const goalsHtml = goals.length ? goals.map((c) => {
         const streak = computeStreak(checkins, c.id, today);
@@ -423,7 +441,7 @@
     }
 
     async function logCheckin(commitmentId, status) {
-      const today = dateKey();
+      const today = hubToday();
       const existing = checkins.find((c) => c.member_id === myId() && c.commitment_id === commitmentId && c.check_date === today);
       const prevStreak = computeStreak(checkins, commitmentId, today);
       const now = new Date().toISOString();

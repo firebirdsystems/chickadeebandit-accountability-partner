@@ -20,8 +20,8 @@
   "storage": "db",
   "preload": {
     "commitments": {"sql": "SELECT * FROM app_accountability_partner__commitments ORDER BY created_at DESC"},
-    "checkins": {"sql": "SELECT * FROM app_accountability_partner__checkins ORDER BY check_date DESC"},
-    "messages": {"sql": "SELECT * FROM app_accountability_partner__messages ORDER BY sent_at ASC"},
+    "checkins": {"sql": "SELECT * FROM app_accountability_partner__checkins WHERE check_date >= date(?, '-365 days') ORDER BY check_date DESC", "params": [":today"]},
+    "messages": {"sql": "SELECT * FROM app_accountability_partner__messages WHERE sent_at >= date(?, '-365 days') ORDER BY sent_at ASC", "params": [":today"]},
     "profile": {"sql": "SELECT * FROM app_accountability_partner__profiles WHERE member_id = ? LIMIT 1", "params": [":me"]}
   },
   "db_plaintext_columns": ["active", "interval_hours", "last_checkin_at", "last_alerted_at", "cadence"],
