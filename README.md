@@ -1,5 +1,7 @@
 # Accountability Partner
 
+A [Chickadee Bandit](https://chickadeebandit.com/app-library/accountability-partner) app.
+
 Pair up with **one** accountability partner — a sponsor, a sobriety or fitness
 buddy, a goal-keeping friend — and support each other. Not romantic, not a group:
 two people, mutually chosen.
