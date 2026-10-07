@@ -112,7 +112,7 @@
   <script type="module">
     import {
       memberColor, initial, esc, hubConfirm, hubAlert,
-      sendHubNotification, hubAppUrl, formatRelativeDate, searchMatch, hubToday,
+      sendHubNotification, hubAppUrl, formatRelativeDate, searchMatch, hubToday, glyph,
     } from "/hub-sdk.js";
     import {
       statusForDay, computeStreak, weeklyKept,
@@ -269,7 +269,7 @@
         </label>`).join("");
       return `
         <div class="card" data-testid="view-setup" data-waiting="${waiting ? "yes" : "no"}">
-          <h1>🤝 Accountability Partner</h1>
+          <h1>${glyph("handshake")} Accountability Partner</h1>
           <p class="muted">Pair up with one person to support each other's goals. Choose your partner — you'll be connected once they choose you back.</p>
           ${waiting ? `<div class="banner">Waiting for <strong>${esc(memberName(partnerId))}</strong> to choose you back.</div>` : ""}
           ${others.length ? `<div id="partner-list">${list}</div>
@@ -289,7 +289,7 @@
       return `
         <div data-testid="view-main">
         <div class="row between">
-          <h1>🤝 Accountability</h1>
+          <h1>${glyph("handshake")} Accountability</h1>
           <span class="row" style="gap:6px">
             <span class="avatar" style="width:26px;height:26px;font-size:.75rem;background:${memberColor(partnerId, members)}">${esc(initial(pName))}</span>
             <span class="muted">with ${esc(pName)}</span>
@@ -325,7 +325,7 @@
             </div>
             ${c.detail ? `<p class="muted" style="margin:4px 0 0;font-size:.85rem">${esc(c.detail)}</p>` : ""}
             <div class="row between" style="margin-top:6px">
-              <span class="muted" style="font-size:.82rem">🔥 <span class="streak">${streak}</span> day${streak === 1 ? "" : "s"}${weekly}</span>
+              <span class="muted" style="font-size:.82rem">${glyph("flame")} <span class="streak">${streak}</span> day${streak === 1 ? "" : "s"}${weekly}</span>
               ${isMine ? `<span class="row" style="gap:4px">
                 <button class="btn btn-sm" data-testid="edit-goal" data-action="edit-goal" data-id="${esc(c.id)}">Edit</button>
                 <button class="btn btn-sm" data-action="archive-goal" data-id="${esc(c.id)}">Archive</button>
@@ -410,7 +410,7 @@
               ? `On — if you go quiet for ${esc(String(hrs))}h, ${esc(partner()?.name ?? "your partner")} gets an email.`
               : `Off — turn this on to alert ${esc(partner()?.name ?? "your partner")} if you go silent.`}
           </p>
-          ${upgrade ? `<p class="muted" style="font-size:.8rem;margin-top:6px">⚡ Email alerts need the hub's cron + email add-on for your household. You can still set it up now; alerts start once it's unlocked.</p>` : ""}
+          ${upgrade ? `<p class="muted" style="font-size:.8rem;margin-top:6px">${glyph("bell")} Email alerts need the hub's cron + email add-on for your household. You can still set it up now; alerts start once it's unlocked.</p>` : ""}
         </div>`;
     }
 
