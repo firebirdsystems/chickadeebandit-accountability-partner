@@ -1,0 +1,1733 @@
+{
+  "seed": [
+    {
+      "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)",
+      "params": [
+        "{{me}}",
+        "{{partner}}",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__partner_config (member_id, partner_id, session_id) VALUES (?, ?, ?)",
+      "params": [
+        "{{partner}}",
+        "{{me}}",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__commitments (id, member_id, title, detail, cadence, target_per_week, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-110 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-110 days','+0 minutes'))",
+      "params": [
+        "perf-cm-me-1",
+        "{{me}}",
+        "No alcohol on weeknights",
+        "Monday through Thursday, no exceptions.",
+        "daily",
+        7,
+        1
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__commitments (id, member_id, title, detail, cadence, target_per_week, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-95 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-95 days','+0 minutes'))",
+      "params": [
+        "perf-cm-me-2",
+        "{{me}}",
+        "Walk 30 minutes",
+        "Before work or at lunch.",
+        "daily",
+        5,
+        1
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__commitments (id, member_id, title, detail, cadence, target_per_week, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-80 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-80 days','+0 minutes'))",
+      "params": [
+        "perf-cm-me-3",
+        "{{me}}",
+        "Call my sponsor",
+        "Sunday evening check-in call.",
+        "weekly",
+        1,
+        1
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__commitments (id, member_id, title, detail, cadence, target_per_week, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-120 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-120 days','+0 minutes'))",
+      "params": [
+        "perf-cm-me-4",
+        "{{me}}",
+        "Journal before bed",
+        "Three lines is enough.",
+        "daily",
+        7,
+        0
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__commitments (id, member_id, title, detail, cadence, target_per_week, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-105 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-105 days','+0 minutes'))",
+      "params": [
+        "perf-cm-p-1",
+        "{{partner}}",
+        "Gym three times a week",
+        "Strength on Mon/Wed/Fri.",
+        "weekly",
+        3,
+        1
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__commitments (id, member_id, title, detail, cadence, target_per_week, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-90 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-90 days','+0 minutes'))",
+      "params": [
+        "perf-cm-p-2",
+        "{{partner}}",
+        "No phone after 10pm",
+        "Phone charges in the kitchen.",
+        "daily",
+        7,
+        1
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__commitments (id, member_id, title, detail, cadence, target_per_week, active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-60 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-60 days','+0 minutes'))",
+      "params": [
+        "perf-cm-p-3",
+        "{{partner}}",
+        "Meditate 10 minutes",
+        "Morning, before coffee.",
+        "daily",
+        6,
+        1
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','0 days','-37 minutes'))",
+      "params": [
+        "perf-ck-01",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:0}}",
+        "on_track",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 days','-74 minutes'))",
+      "params": [
+        "perf-ck-02",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-1}}",
+        "on_track",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-2 days','-111 minutes'))",
+      "params": [
+        "perf-ck-03",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-2}}",
+        "on_track",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-3 days','-148 minutes'))",
+      "params": [
+        "perf-ck-04",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-3}}",
+        "on_track",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-4 days','-185 minutes'))",
+      "params": [
+        "perf-ck-05",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-4}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-5 days','-222 minutes'))",
+      "params": [
+        "perf-ck-06",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-5}}",
+        "partial"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-6 days','-259 minutes'))",
+      "params": [
+        "perf-ck-07",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-6}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-7 days','-296 minutes'))",
+      "params": [
+        "perf-ck-08",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-7}}",
+        "on_track",
+        "Felt strong today."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-8 days','-333 minutes'))",
+      "params": [
+        "perf-ck-09",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-8}}",
+        "missed",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-9 days','-370 minutes'))",
+      "params": [
+        "perf-ck-10",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-9}}",
+        "on_track",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-10 days','-407 minutes'))",
+      "params": [
+        "perf-ck-11",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-10}}",
+        "on_track",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-11 days','-444 minutes'))",
+      "params": [
+        "perf-ck-12",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-11}}",
+        "partial",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-12 days','-481 minutes'))",
+      "params": [
+        "perf-ck-13",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-12}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-13 days','-518 minutes'))",
+      "params": [
+        "perf-ck-14",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-13}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-14 days','-555 minutes'))",
+      "params": [
+        "perf-ck-15",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-14}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-15 days','-592 minutes'))",
+      "params": [
+        "perf-ck-16",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-15}}",
+        "on_track",
+        "Felt strong today."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-16 days','-29 minutes'))",
+      "params": [
+        "perf-ck-17",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-16}}",
+        "on_track",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-17 days','-66 minutes'))",
+      "params": [
+        "perf-ck-18",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-17}}",
+        "partial",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-18 days','-103 minutes'))",
+      "params": [
+        "perf-ck-19",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-18}}",
+        "on_track",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-19 days','-140 minutes'))",
+      "params": [
+        "perf-ck-20",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-19}}",
+        "missed",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-20 days','-177 minutes'))",
+      "params": [
+        "perf-ck-21",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-20}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-21 days','-214 minutes'))",
+      "params": [
+        "perf-ck-22",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-21}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-22 days','-251 minutes'))",
+      "params": [
+        "perf-ck-23",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-22}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-23 days','-288 minutes'))",
+      "params": [
+        "perf-ck-24",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-23}}",
+        "partial",
+        "Felt strong today."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-24 days','-325 minutes'))",
+      "params": [
+        "perf-ck-25",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-24}}",
+        "on_track",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-25 days','-362 minutes'))",
+      "params": [
+        "perf-ck-26",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-25}}",
+        "on_track",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-26 days','-399 minutes'))",
+      "params": [
+        "perf-ck-27",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-26}}",
+        "on_track",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-27 days','-436 minutes'))",
+      "params": [
+        "perf-ck-28",
+        "{{me}}",
+        "perf-cm-me-1",
+        "{{date:-27}}",
+        "on_track",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','0 days','-473 minutes'))",
+      "params": [
+        "perf-ck-29",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:0}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 days','-510 minutes'))",
+      "params": [
+        "perf-ck-30",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-1}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-2 days','-547 minutes'))",
+      "params": [
+        "perf-ck-31",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-2}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-3 days','-584 minutes'))",
+      "params": [
+        "perf-ck-32",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-3}}",
+        "on_track",
+        "Felt strong today."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-4 days','-21 minutes'))",
+      "params": [
+        "perf-ck-33",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-4}}",
+        "on_track",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-5 days','-58 minutes'))",
+      "params": [
+        "perf-ck-34",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-5}}",
+        "partial",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-6 days','-95 minutes'))",
+      "params": [
+        "perf-ck-35",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-6}}",
+        "missed",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-7 days','-132 minutes'))",
+      "params": [
+        "perf-ck-36",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-7}}",
+        "on_track",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-8 days','-169 minutes'))",
+      "params": [
+        "perf-ck-37",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-8}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-9 days','-206 minutes'))",
+      "params": [
+        "perf-ck-38",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-9}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-10 days','-243 minutes'))",
+      "params": [
+        "perf-ck-39",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-10}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-11 days','-280 minutes'))",
+      "params": [
+        "perf-ck-40",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-11}}",
+        "partial",
+        "Felt strong today."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-12 days','-317 minutes'))",
+      "params": [
+        "perf-ck-41",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-12}}",
+        "on_track",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-13 days','-354 minutes'))",
+      "params": [
+        "perf-ck-42",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-13}}",
+        "on_track",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-14 days','-391 minutes'))",
+      "params": [
+        "perf-ck-43",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-14}}",
+        "on_track",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-15 days','-428 minutes'))",
+      "params": [
+        "perf-ck-44",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-15}}",
+        "missed",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-16 days','-465 minutes'))",
+      "params": [
+        "perf-ck-45",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-16}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-17 days','-502 minutes'))",
+      "params": [
+        "perf-ck-46",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-17}}",
+        "partial"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-18 days','-539 minutes'))",
+      "params": [
+        "perf-ck-47",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-18}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-19 days','-576 minutes'))",
+      "params": [
+        "perf-ck-48",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-19}}",
+        "on_track",
+        "Felt strong today."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-20 days','-13 minutes'))",
+      "params": [
+        "perf-ck-49",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-20}}",
+        "on_track",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-21 days','-50 minutes'))",
+      "params": [
+        "perf-ck-50",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-21}}",
+        "on_track",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-22 days','-87 minutes'))",
+      "params": [
+        "perf-ck-51",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-22}}",
+        "on_track",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-23 days','-124 minutes'))",
+      "params": [
+        "perf-ck-52",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-23}}",
+        "partial",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-24 days','-161 minutes'))",
+      "params": [
+        "perf-ck-53",
+        "{{me}}",
+        "perf-cm-me-2",
+        "{{date:-24}}",
+        "missed"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','0 days','-198 minutes'))",
+      "params": [
+        "perf-ck-54",
+        "{{me}}",
+        "perf-cm-me-3",
+        "{{date:0}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-7 days','-235 minutes'))",
+      "params": [
+        "perf-ck-55",
+        "{{me}}",
+        "perf-cm-me-3",
+        "{{date:-7}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-14 days','-272 minutes'))",
+      "params": [
+        "perf-ck-56",
+        "{{me}}",
+        "perf-cm-me-3",
+        "{{date:-14}}",
+        "on_track",
+        "Felt strong today."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-21 days','-309 minutes'))",
+      "params": [
+        "perf-ck-57",
+        "{{me}}",
+        "perf-cm-me-3",
+        "{{date:-21}}",
+        "on_track",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-28 days','-346 minutes'))",
+      "params": [
+        "perf-ck-58",
+        "{{me}}",
+        "perf-cm-me-3",
+        "{{date:-28}}",
+        "on_track",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-35 days','-383 minutes'))",
+      "params": [
+        "perf-ck-59",
+        "{{me}}",
+        "perf-cm-me-3",
+        "{{date:-35}}",
+        "partial",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-42 days','-420 minutes'))",
+      "params": [
+        "perf-ck-60",
+        "{{me}}",
+        "perf-cm-me-3",
+        "{{date:-42}}",
+        "on_track",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-49 days','-457 minutes'))",
+      "params": [
+        "perf-ck-61",
+        "{{me}}",
+        "perf-cm-me-3",
+        "{{date:-49}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-56 days','-494 minutes'))",
+      "params": [
+        "perf-ck-62",
+        "{{me}}",
+        "perf-cm-me-3",
+        "{{date:-56}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-63 days','-531 minutes'))",
+      "params": [
+        "perf-ck-63",
+        "{{me}}",
+        "perf-cm-me-3",
+        "{{date:-63}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-70 days','-568 minutes'))",
+      "params": [
+        "perf-ck-64",
+        "{{me}}",
+        "perf-cm-me-3",
+        "{{date:-70}}",
+        "on_track",
+        "Felt strong today."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','0 days','-5 minutes'))",
+      "params": [
+        "perf-ck-65",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:0}}",
+        "on_track",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-2 days','-42 minutes'))",
+      "params": [
+        "perf-ck-66",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-2}}",
+        "on_track",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-4 days','-79 minutes'))",
+      "params": [
+        "perf-ck-67",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-4}}",
+        "on_track",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-6 days','-116 minutes'))",
+      "params": [
+        "perf-ck-68",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-6}}",
+        "on_track",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-8 days','-153 minutes'))",
+      "params": [
+        "perf-ck-69",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-8}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-10 days','-190 minutes'))",
+      "params": [
+        "perf-ck-70",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-10}}",
+        "missed"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-12 days','-227 minutes'))",
+      "params": [
+        "perf-ck-71",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-12}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-14 days','-264 minutes'))",
+      "params": [
+        "perf-ck-72",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-14}}",
+        "on_track",
+        "Felt strong today."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-16 days','-301 minutes'))",
+      "params": [
+        "perf-ck-73",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-16}}",
+        "on_track",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-18 days','-338 minutes'))",
+      "params": [
+        "perf-ck-74",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-18}}",
+        "on_track",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-20 days','-375 minutes'))",
+      "params": [
+        "perf-ck-75",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-20}}",
+        "on_track",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-22 days','-412 minutes'))",
+      "params": [
+        "perf-ck-76",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-22}}",
+        "on_track",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-24 days','-449 minutes'))",
+      "params": [
+        "perf-ck-77",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-24}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-26 days','-486 minutes'))",
+      "params": [
+        "perf-ck-78",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-26}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-28 days','-523 minutes'))",
+      "params": [
+        "perf-ck-79",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-28}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-30 days','-560 minutes'))",
+      "params": [
+        "perf-ck-80",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-30}}",
+        "on_track",
+        "Felt strong today."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-32 days','-597 minutes'))",
+      "params": [
+        "perf-ck-81",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-32}}",
+        "on_track",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-34 days','-34 minutes'))",
+      "params": [
+        "perf-ck-82",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-34}}",
+        "on_track",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-36 days','-71 minutes'))",
+      "params": [
+        "perf-ck-83",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-36}}",
+        "missed",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-38 days','-108 minutes'))",
+      "params": [
+        "perf-ck-84",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-38}}",
+        "on_track",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-40 days','-145 minutes'))",
+      "params": [
+        "perf-ck-85",
+        "{{partner}}",
+        "perf-cm-p-1",
+        "{{date:-40}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','0 days','-182 minutes'))",
+      "params": [
+        "perf-ck-86",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:0}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 days','-219 minutes'))",
+      "params": [
+        "perf-ck-87",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-1}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-2 days','-256 minutes'))",
+      "params": [
+        "perf-ck-88",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-2}}",
+        "on_track",
+        "Felt strong today."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-3 days','-293 minutes'))",
+      "params": [
+        "perf-ck-89",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-3}}",
+        "on_track",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-4 days','-330 minutes'))",
+      "params": [
+        "perf-ck-90",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-4}}",
+        "on_track",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-5 days','-367 minutes'))",
+      "params": [
+        "perf-ck-91",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-5}}",
+        "missed",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-6 days','-404 minutes'))",
+      "params": [
+        "perf-ck-92",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-6}}",
+        "on_track",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-7 days','-441 minutes'))",
+      "params": [
+        "perf-ck-93",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-7}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-8 days','-478 minutes'))",
+      "params": [
+        "perf-ck-94",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-8}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-9 days','-515 minutes'))",
+      "params": [
+        "perf-ck-95",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-9}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-10 days','-552 minutes'))",
+      "params": [
+        "perf-ck-96",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-10}}",
+        "on_track",
+        "Felt strong today."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-11 days','-589 minutes'))",
+      "params": [
+        "perf-ck-97",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-11}}",
+        "partial",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-12 days','-26 minutes'))",
+      "params": [
+        "perf-ck-98",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-12}}",
+        "on_track",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-13 days','-63 minutes'))",
+      "params": [
+        "perf-ck-99",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-13}}",
+        "missed",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-14 days','-100 minutes'))",
+      "params": [
+        "perf-ck-100",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-14}}",
+        "on_track",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-15 days','-137 minutes'))",
+      "params": [
+        "perf-ck-101",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-15}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-16 days','-174 minutes'))",
+      "params": [
+        "perf-ck-102",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-16}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-17 days','-211 minutes'))",
+      "params": [
+        "perf-ck-103",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-17}}",
+        "partial"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-18 days','-248 minutes'))",
+      "params": [
+        "perf-ck-104",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-18}}",
+        "on_track",
+        "Felt strong today."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-19 days','-285 minutes'))",
+      "params": [
+        "perf-ck-105",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-19}}",
+        "on_track",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-20 days','-322 minutes'))",
+      "params": [
+        "perf-ck-106",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-20}}",
+        "on_track",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-21 days','-359 minutes'))",
+      "params": [
+        "perf-ck-107",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-21}}",
+        "missed",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-22 days','-396 minutes'))",
+      "params": [
+        "perf-ck-108",
+        "{{partner}}",
+        "perf-cm-p-2",
+        "{{date:-22}}",
+        "on_track",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','0 days','-433 minutes'))",
+      "params": [
+        "perf-ck-109",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:0}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 days','-470 minutes'))",
+      "params": [
+        "perf-ck-110",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-1}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-2 days','-507 minutes'))",
+      "params": [
+        "perf-ck-111",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-2}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-3 days','-544 minutes'))",
+      "params": [
+        "perf-ck-112",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-3}}",
+        "on_track",
+        "Felt strong today."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-4 days','-581 minutes'))",
+      "params": [
+        "perf-ck-113",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-4}}",
+        "on_track",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-5 days','-18 minutes'))",
+      "params": [
+        "perf-ck-114",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-5}}",
+        "partial",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-6 days','-55 minutes'))",
+      "params": [
+        "perf-ck-115",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-6}}",
+        "on_track",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-7 days','-92 minutes'))",
+      "params": [
+        "perf-ck-116",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-7}}",
+        "missed",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-8 days','-129 minutes'))",
+      "params": [
+        "perf-ck-117",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-8}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-9 days','-166 minutes'))",
+      "params": [
+        "perf-ck-118",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-9}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-10 days','-203 minutes'))",
+      "params": [
+        "perf-ck-119",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-10}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-11 days','-240 minutes'))",
+      "params": [
+        "perf-ck-120",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-11}}",
+        "partial",
+        "Felt strong today."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-12 days','-277 minutes'))",
+      "params": [
+        "perf-ck-121",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-12}}",
+        "on_track",
+        "Tough afternoon but held on."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-13 days','-314 minutes'))",
+      "params": [
+        "perf-ck-122",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-13}}",
+        "on_track",
+        "Short one, still counts."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-14 days','-351 minutes'))",
+      "params": [
+        "perf-ck-123",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-14}}",
+        "on_track",
+        "Slipped a little after dinner."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-15 days','-388 minutes'))",
+      "params": [
+        "perf-ck-124",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-15}}",
+        "on_track",
+        "Good day."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-16 days','-425 minutes'))",
+      "params": [
+        "perf-ck-125",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-16}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-17 days','-462 minutes'))",
+      "params": [
+        "perf-ck-126",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-17}}",
+        "missed"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, created_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-18 days','-499 minutes'))",
+      "params": [
+        "perf-ck-127",
+        "{{partner}}",
+        "perf-cm-p-3",
+        "{{date:-18}}",
+        "on_track"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-55 days','-30 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-55 days','-10 minutes'), ?)",
+      "params": [
+        "perf-msg-01",
+        "{{partner}}",
+        "{{me}}",
+        "Proud of you, two weeks strong!",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-53 days','-37 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-53 days','-17 minutes'), ?)",
+      "params": [
+        "perf-msg-02",
+        "{{me}}",
+        "{{partner}}",
+        "Thanks, that means a lot.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-51 days','-44 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-51 days','-24 minutes'), ?)",
+      "params": [
+        "perf-msg-03",
+        "{{partner}}",
+        "{{me}}",
+        "How was the gym today?",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-48 days','-51 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-48 days','-31 minutes'), ?)",
+      "params": [
+        "perf-msg-04",
+        "{{me}}",
+        "{{partner}}",
+        "Skipped it, honestly. Back on Friday.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-46 days','-58 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-46 days','-38 minutes'), ?)",
+      "params": [
+        "perf-msg-05",
+        "{{partner}}",
+        "{{me}}",
+        "No judgment. Friday it is.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-44 days','-65 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-44 days','-45 minutes'), ?)",
+      "params": [
+        "perf-msg-06",
+        "{{me}}",
+        "{{partner}}",
+        "🆘 Rough night. Can you call?",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-42 days','-72 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-42 days','-52 minutes'), ?)",
+      "params": [
+        "perf-msg-07",
+        "{{partner}}",
+        "{{me}}",
+        "Calling now.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-40 days','-79 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-40 days','-59 minutes'), ?)",
+      "params": [
+        "perf-msg-08",
+        "{{me}}",
+        "{{partner}}",
+        "Thank you for picking up last night.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-37 days','-86 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-37 days','-66 minutes'), ?)",
+      "params": [
+        "perf-msg-09",
+        "{{partner}}",
+        "{{me}}",
+        "Always. That is the deal.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-35 days','-93 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-35 days','-73 minutes'), ?)",
+      "params": [
+        "perf-msg-10",
+        "{{me}}",
+        "{{partner}}",
+        "Walk done, 35 minutes in the rain.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-33 days','-100 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-33 days','-80 minutes'), ?)",
+      "params": [
+        "perf-msg-11",
+        "{{partner}}",
+        "{{me}}",
+        "Showoff. Nice work.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-31 days','-107 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-31 days','-87 minutes'), ?)",
+      "params": [
+        "perf-msg-12",
+        "{{me}}",
+        "{{partner}}",
+        "Meditation streak is at 12 days.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-29 days','-114 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-29 days','-94 minutes'), ?)",
+      "params": [
+        "perf-msg-13",
+        "{{partner}}",
+        "{{me}}",
+        "That is your record, right?",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-26 days','-121 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-26 days','-101 minutes'), ?)",
+      "params": [
+        "perf-msg-14",
+        "{{me}}",
+        "{{partner}}",
+        "It is. Feels good.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-24 days','-128 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-24 days','-108 minutes'), ?)",
+      "params": [
+        "perf-msg-15",
+        "{{partner}}",
+        "{{me}}",
+        "Sponsor call went well tonight.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-22 days','-135 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-22 days','-115 minutes'), ?)",
+      "params": [
+        "perf-msg-16",
+        "{{me}}",
+        "{{partner}}",
+        "Glad to hear it. What did you talk about?",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-20 days','-142 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-20 days','-122 minutes'), ?)",
+      "params": [
+        "perf-msg-17",
+        "{{partner}}",
+        "{{me}}",
+        "Mostly the holidays coming up.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-18 days','-149 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-18 days','-129 minutes'), ?)",
+      "params": [
+        "perf-msg-18",
+        "{{me}}",
+        "{{partner}}",
+        "We will plan for those together.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-15 days','-156 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-15 days','-136 minutes'), ?)",
+      "params": [
+        "perf-msg-19",
+        "{{partner}}",
+        "{{me}}",
+        "Phone stayed in the kitchen all week.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-13 days','-163 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-13 days','-143 minutes'), ?)",
+      "params": [
+        "perf-msg-20",
+        "{{me}}",
+        "{{partner}}",
+        "Sleeping better?",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-11 days','-170 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-11 days','-150 minutes'), ?)",
+      "params": [
+        "perf-msg-21",
+        "{{partner}}",
+        "{{me}}",
+        "Much better.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-9 days','-177 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-9 days','-157 minutes'), ?)",
+      "params": [
+        "perf-msg-22",
+        "{{me}}",
+        "{{partner}}",
+        "Checking in early today, big meeting.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-7 days','-184 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-7 days','-164 minutes'), ?)",
+      "params": [
+        "perf-msg-23",
+        "{{partner}}",
+        "{{me}}",
+        "Good luck! You have this.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, read_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-4 days','-191 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-4 days','-171 minutes'), ?)",
+      "params": [
+        "perf-msg-24",
+        "{{me}}",
+        "{{partner}}",
+        "Made it through the work dinner without a drink.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-2 days','-198 minutes'), ?)",
+      "params": [
+        "perf-msg-25",
+        "{{partner}}",
+        "{{me}}",
+        "That is huge. Really proud of you.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__messages (id, sender_id, recipient_id, content, sent_at, session_id) VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','0 days','-205 minutes'), ?)",
+      "params": [
+        "perf-msg-26",
+        "{{me}}",
+        "{{partner}}",
+        "One day at a time.",
+        "perf-acct-session"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__profiles (id, member_id, active, interval_hours, message, last_checkin_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','0 days','-120 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-100 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-10 days','+0 minutes'))",
+      "params": [
+        "perf-prof-me",
+        "{{me}}",
+        0,
+        48,
+        "If I go quiet, please call me."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_accountability_partner__profiles (id, member_id, active, interval_hours, message, last_checkin_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','0 days','-200 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-98 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-20 days','+0 minutes'))",
+      "params": [
+        "perf-prof-partner",
+        "{{partner}}",
+        0,
+        72,
+        "Check on me if I miss two days."
+      ]
+    }
+  ]
+}

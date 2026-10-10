@@ -718,10 +718,15 @@
 
     // ── Init ───────────────────────────────────────────────────────────────
     (async () => {
-      await loadMembers();
-      await loadPartner();
-      if (partnerId && partnerReciprocal) {
-        await Promise.all([loadData(), loadAlertStatus()]);
+      // Everything is asked for at once. The data reads used to wait for the
+      // pairing, and the pairing for the member list: three waits in a row
+      // where one does. What they return is scoped to this member by the hub
+      // either way; without a confirmed pairing it is simply not kept.
+      const data = Promise.all([loadData(), loadAlertStatus()]);
+      await Promise.all([loadMembers(), loadPartner(), data]);
+      if (!(partnerId && partnerReciprocal) && ME) {
+        commitments = []; checkins = []; messages = []; myProfile = null;
+        alertStatus = { entitled: false, missing_capabilities: [], last_checkin_at: null };
       }
       render();
       markRead();
