@@ -67,6 +67,15 @@
       background: var(--hub-tint-warning, #fef3c7); border: 1px solid var(--hub-tint-warning-border, #fde68a); color: var(--hub-tint-warning-fg, #92400e);
       border-radius: var(--hub-radius, 10px); padding: 10px 12px; margin-bottom: 14px;
     }
+    .load-error {
+      margin: 0 0 12px; padding: 10px 14px; border-radius: var(--hub-radius, 10px);
+      background: var(--hub-tint-danger, #fee2e2); color: var(--hub-tint-danger-fg, #b91c1c);
+      font-size: .9rem; display: flex; gap: 10px; align-items: center; justify-content: space-between;
+    }
+    .load-error-retry {
+      background: none; border: 1px solid currentColor; border-radius: 8px;
+      padding: 4px 10px; color: inherit; font: inherit; cursor: pointer; white-space: nowrap;
+    }
     .goal { padding: 10px 0; border-top: 1px solid var(--hub-border, #eef0f3); }
     .goal:first-child { border-top: 0; }
     .goal-title { font-weight: 600; }
@@ -139,6 +148,12 @@
     let myProfile = null;   // my alert switch row (owner_only)
     let alertStatus = { entitled: false, missing_capabilities: [], last_checkin_at: null };
     let modalEl = null;
+    // Set when a launch read failed, so the page says so instead of reading as
+    // "nothing here yet". loadFailed is the pairing lookup; dataFailed is the
+    // data reads. Those are asked for before the pairing is known, so one that
+    // fails counts for an unpaired member too: the hub is not answering.
+    let loadFailed = false;
+    let dataFailed = false;
 
     const partner = () => (partnerId ? memberMap.get(partnerId) : null);
     const myId = () => ME?.id ?? "demo-me";
@@ -150,8 +165,9 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sql, params }),
       });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? `DB error ${res.status}`);
-      return res.json();
+      const json = await res.json().catch(() => null);
+      if (!res.ok || !json || typeof json !== "object" || json.error) throw new Error(json?.error || "Couldn’t reach the hub. Try again.");
+      return json;
     }
 
     function memberName(id) { return memberMap.get(id)?.name ?? "Unknown"; }
@@ -167,21 +183,31 @@
         memberMap = new Map(members.map((m) => [m.id, m]));
         return;
       }
+      // A roster that could not be read is a failed launch read, not a
+      // household with nobody in it.
       try {
         const res = await fetch(`${CONTEXT}?keys=family.members`);
-        members = ((await res.json())["family.members"]) ?? [];
-      } catch { members = []; }
+        const json = await res.json().catch(() => null);
+        if (!res.ok || !json || typeof json !== "object" || json.error) throw new Error("members unavailable");
+        // The hub answers 200 and names a key it could not resolve in $errors: that read failed too.
+        if (Array.isArray(json.$errors) && json.$errors.includes("family.members")) throw new Error("members unavailable");
+        members = json["family.members"] ?? [];
+      } catch { members = []; loadFailed = true; }
       memberMap = new Map(members.map((m) => [m.id, m]));
     }
 
     async function loadPartner() {
       if (!ME) { partnerId = "demo-partner"; partnerReciprocal = true; return; }
+      // An unpaired member is answered 200 with partner_id null. Any other
+      // answer is a failed read: it is not "no partner yet".
       try {
         const res = await fetch(`/run/${APP_ID}/api/partner`);
-        const s = res.ok ? await res.json() : {};
+        if (!res.ok) throw new Error("partner unavailable");
+        const s = await res.json();
+        if (!s || typeof s !== "object" || !("partner_id" in s)) throw new Error("partner unavailable");
         partnerId = s.partner_id ?? null;
         partnerReciprocal = !!s.reciprocal;
-      } catch { partnerId = null; partnerReciprocal = false; }
+      } catch { partnerId = null; partnerReciprocal = false; loadFailed = true; }
     }
 
     async function loadData() {
@@ -192,23 +218,24 @@
       // 120 days — the thread, unread badge, and search cover a season, and
       // retention deletes at 365 anyway. The date param is the household-local
       // day so the hub's `:today` preload binding matches this text.
+      const unread = () => { dataFailed = true; return { rows: [] }; };
       const [c, k, m, p] = await Promise.all([
-        db("SELECT * FROM app_accountability_partner__commitments ORDER BY created_at DESC").catch(() => ({ rows: [] })),
+        db("SELECT * FROM app_accountability_partner__commitments ORDER BY created_at DESC").catch(unread),
         // hubToday(), not hubToday(): the hub binds `:today` to the HOUSEHOLD-local
         // date while hubToday() reads the viewer device's clock, so around midnight
         // or across timezones the params disagree and these preloads silently stop
         // answering. hubToday() is the client half of the `:today` contract. The
         // day keys the streak logic builds stay on hubToday() — only the preload
         // boundary has to agree with the hub.
-        db("SELECT * FROM app_accountability_partner__checkins WHERE check_date >= date(?, '-365 days') ORDER BY check_date DESC", [hubToday()]).catch(() => ({ rows: [] })),
+        db("SELECT * FROM app_accountability_partner__checkins WHERE check_date >= date(?, '-365 days') ORDER BY check_date DESC", [hubToday()]).catch(unread),
         // The window matches the messages table's own retain_days (365), deliberately.
         // A tighter window would not bound anything retention does not already
         // bound, and there is no "load older" path here — so a 120-day window
         // simply hid eight months of a conversation the platform was still
         // storing, and narrowed the message search to match, with nothing on
         // screen saying so.
-        db("SELECT * FROM app_accountability_partner__messages WHERE sent_at >= date(?, '-365 days') ORDER BY sent_at ASC", [hubToday()]).catch(() => ({ rows: [] })),
-        db("SELECT * FROM app_accountability_partner__profiles WHERE member_id = ? LIMIT 1", [myId()]).catch(() => ({ rows: [] })),
+        db("SELECT * FROM app_accountability_partner__messages WHERE sent_at >= date(?, '-365 days') ORDER BY sent_at ASC", [hubToday()]).catch(unread),
+        db("SELECT * FROM app_accountability_partner__profiles WHERE member_id = ? LIMIT 1", [myId()]).catch(unread),
       ]);
       commitments = c.rows;
       checkins = k.rows;
@@ -220,8 +247,9 @@
       if (!ME) return;
       try {
         const res = await fetch(`/run/${APP_ID}/api/check-in`);
-        if (res.ok) alertStatus = await res.json();
-      } catch { /* non-fatal */ }
+        if (!res.ok) throw new Error("unread");
+        alertStatus = await res.json();
+      } catch { alertStatus = { ...alertStatus, entitled: null }; /* non-fatal: unknown, so nothing is said about the add-on */ }
     }
 
     function seedDemo() {
@@ -254,8 +282,17 @@
       const app = document.getElementById("app");
       if (!ME && CONTEXT) { app.innerHTML = `<div class="card"><p>Sign in to use Accountability Partner.</p></div>`; return; }
 
+      // A failed launch read draws the banner alone: no setup screen for a
+      // member whose pairing could not be read, and no empty lanes for goals
+      // that could not be.
+      if (loadFailed) { app.innerHTML = renderLoadError("your partner"); return; }
+      if (dataFailed) { app.innerHTML = renderLoadError("your goals and messages"); return; }
       if (!partnerId || !partnerReciprocal) { app.innerHTML = renderSetup(); return; }
       app.innerHTML = renderMain();
+    }
+
+    function renderLoadError(thing) {
+      return `<div class="load-error" data-testid="load-error" role="alert"><span>Couldn’t load ${thing}.</span> <button type="button" class="load-error-retry" data-testid="load-retry" data-action="retry-load">Try again</button></div>`;
     }
 
     function renderSetup() {
@@ -398,7 +435,7 @@
     function renderAlertCard() {
       const armed = myProfile && Number(myProfile.active) === 1;
       const hrs = myProfile?.interval_hours ?? 48;
-      const upgrade = ME && !alertStatus.entitled;
+      const upgrade = ME && alertStatus.entitled === false;
       return `
         <div class="card">
           <div class="row between">
@@ -427,12 +464,12 @@
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ partner_id: chosen }),
           });
-          if (!res.ok) throw new Error((await res.json()).error ?? "Could not save partner");
+          if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? "Could not save partner");
           const s = await res.json();
           partnerId = s.partner_id ?? chosen;
           partnerReciprocal = !!s.reciprocal;
         } else { partnerId = chosen; partnerReciprocal = true; }
-        if (partnerReciprocal) await loadData();
+        if (partnerReciprocal) { loadFailed = false; dataFailed = false; await loadData(); }
         render();
       } catch (e) {
         if (btn) { btn.disabled = false; btn.textContent = "Connect"; }
@@ -446,15 +483,20 @@
       const prevStreak = computeStreak(checkins, commitmentId, today);
       const now = new Date().toISOString();
 
-      if (existing) {
-        if (ME) await db("UPDATE app_accountability_partner__checkins SET status = ? WHERE id = ?", [status, existing.id]);
-        existing.status = status;
-      } else {
-        const id = crypto.randomUUID();
-        if (ME) await db(
-          "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-          [id, myId(), commitmentId, today, status, "", now]);
-        checkins.push({ id, member_id: myId(), commitment_id: commitmentId, check_date: today, status, note: "", created_at: now });
+      try {
+        if (existing) {
+          if (ME) await db("UPDATE app_accountability_partner__checkins SET status = ? WHERE id = ?", [status, existing.id]);
+          existing.status = status;
+        } else {
+          const id = crypto.randomUUID();
+          if (ME) await db(
+            "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [id, myId(), commitmentId, today, status, "", now]);
+          checkins.push({ id, member_id: myId(), commitment_id: commitmentId, check_date: today, status, note: "", created_at: now });
+        }
+      } catch (e) {
+        await hubAlert(e.message);
+        return;
       }
       render();
 
@@ -546,7 +588,12 @@
 
     async function archiveGoal(id) {
       if (!(await hubConfirm({ message: "Archive this goal?", description: "It stops showing and its streak pauses. This can't be undone here." }))) return;
-      if (ME) await db("UPDATE app_accountability_partner__commitments SET active = 0 WHERE id = ?", [id]).catch(() => {});
+      try {
+        if (ME) await db("UPDATE app_accountability_partner__commitments SET active = 0 WHERE id = ?", [id]);
+      } catch (e) {
+        await hubAlert(e.message);
+        return;
+      }
       const c = commitments.find((x) => x.id === id);
       if (c) c.active = 0;
       render();
@@ -575,7 +622,7 @@
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action: "send", content: text }),
           });
-          if (!res.ok) throw new Error((await res.json()).error ?? "Could not send");
+          if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? "Could not send");
         }
         messages.push({ id: crypto.randomUUID(), sender_id: myId(), recipient_id: partnerId, content: text, sent_at: new Date().toISOString(), read_at: null });
         closeModal();
@@ -660,7 +707,12 @@
     }
 
     async function disableAlert() {
-      if (myProfile && ME) await db("UPDATE app_accountability_partner__profiles SET active = 0 WHERE id = ?", [myProfile.id]).catch(() => {});
+      try {
+        if (myProfile && ME) await db("UPDATE app_accountability_partner__profiles SET active = 0 WHERE id = ?", [myProfile.id]);
+      } catch (e) {
+        await hubAlert(e.message);
+        return;
+      }
       if (myProfile) myProfile.active = 0;
       closeModal();
       render();
@@ -700,6 +752,7 @@
       if (!el) return;
       const { action, id, status } = el.dataset;
       switch (action) {
+        case "retry-load":     start(); break;
         case "save-partner":   savePartner(); break;
         case "add-goal":       goalModal(null); break;
         case "edit-goal":      goalModal(commitments.find((c) => c.id === id)); break;
@@ -717,7 +770,8 @@
     });
 
     // ── Init ───────────────────────────────────────────────────────────────
-    (async () => {
+    async function start() {
+      loadFailed = false; dataFailed = false;
       // Everything is asked for at once. The data reads used to wait for the
       // pairing, and the pairing for the member list: three waits in a row
       // where one does. What they return is scoped to this member by the hub
@@ -729,8 +783,10 @@
         alertStatus = { entitled: false, missing_capabilities: [], last_checkin_at: null };
       }
       render();
-      markRead();
-    })();
+      // Messages the banner is hiding have not been seen.
+      if (!loadFailed && !dataFailed) markRead();
+    }
+    start();
   </script>
 </body>
 </html>
