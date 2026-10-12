@@ -473,7 +473,8 @@
         render();
       } catch (e) {
         if (btn) { btn.disabled = false; btn.textContent = "Connect"; }
-        await hubAlert(e.message);
+        console.error("[accountability-partner] could not connect with your partner", e);
+        await hubAlert("Couldn’t connect with your partner — try again.");
       }
     }
 
@@ -495,7 +496,8 @@
           checkins.push({ id, member_id: myId(), commitment_id: commitmentId, check_date: today, status, note: "", created_at: now });
         }
       } catch (e) {
-        await hubAlert(e.message);
+        console.error("[accountability-partner] could not save the check-in", e);
+        await hubAlert("Couldn’t save the check-in — try again.");
         return;
       }
       render();
@@ -582,7 +584,8 @@
         render();
       } catch (e) {
         if (btn) { btn.disabled = false; btn.textContent = "Save"; }
-        await hubAlert(e.message);
+        console.error("[accountability-partner] could not save the goal", e);
+        await hubAlert("Couldn’t save the goal — try again.");
       }
     }
 
@@ -591,7 +594,8 @@
       try {
         if (ME) await db("UPDATE app_accountability_partner__commitments SET active = 0 WHERE id = ?", [id]);
       } catch (e) {
-        await hubAlert(e.message);
+        console.error("[accountability-partner] could not archive the goal", e);
+        await hubAlert("Couldn’t archive the goal — try again.");
         return;
       }
       const c = commitments.find((x) => x.id === id);
@@ -641,7 +645,8 @@
         }).catch(() => {});
       } catch (e) {
         if (btn) { btn.disabled = false; btn.textContent = "Send"; }
-        await hubAlert(e.message);
+        console.error("[accountability-partner] could not send the message", e);
+        await hubAlert("Couldn’t send the message — try again.");
       }
     }
 
@@ -702,7 +707,8 @@
         render();
       } catch (e) {
         if (btn) { btn.disabled = false; btn.textContent = "Turn on"; }
-        await hubAlert(e.message);
+        console.error("[accountability-partner] could not save the alert", e);
+        await hubAlert("Couldn’t save the alert — try again.");
       }
     }
 
@@ -710,7 +716,8 @@
       try {
         if (myProfile && ME) await db("UPDATE app_accountability_partner__profiles SET active = 0 WHERE id = ?", [myProfile.id]);
       } catch (e) {
-        await hubAlert(e.message);
+        console.error("[accountability-partner] could not turn off the alert", e);
+        await hubAlert("Couldn’t turn off the alert — try again.");
         return;
       }
       if (myProfile) myProfile.active = 0;
