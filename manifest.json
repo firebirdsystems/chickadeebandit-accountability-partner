@@ -63,8 +63,7 @@
         "member_column": "member_id",
         "scope_columns": ["commitment_id", "check_date"],
         "limit": 1
-      },
-      "retain_days": { "default": 365, "timestamp_column": "created_at", "override_key": "checkin_history" }
+      }
     },
     "messages": {
       "kind": "couple_scoped",
@@ -76,14 +75,17 @@
       "session_column": "session_id",
       "partner_session_id_column": "session_id",
       "require_reciprocal": true,
-      "endpoint_writes_only": true,
-      "retain_days": { "default": 365, "timestamp_column": "sent_at", "override_key": "message_history" }
+      "endpoint_writes_only": true
     },
     "profiles": {
       "kind": "owner_only",
       "member_column": "member_id",
       "adults_bypass": false
     }
+  },
+  "retention": {
+    "checkins": { "default": 365, "timestamp_column": "created_at", "override_key": "checkin_history" },
+    "messages": { "default": 365, "timestamp_column": "sent_at", "override_key": "message_history" }
   },
   "member_references": {
     "partner_config": [
@@ -155,8 +157,5 @@
     },
     "display": { "template": "badge", "count": "n", "label": "check-ins still to log", "severity": "warn" }
   },
-  "nav": { "label": "Accountability" },
-  "resource_limits": {
-    "max_db_bytes": 52428800
-  }
+  "nav": { "label": "Accountability" }
 }
