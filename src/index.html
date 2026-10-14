@@ -126,6 +126,7 @@
     import {
       statusForDay, computeStreak, weeklyKept,
       isOverdue, daysSince, milestoneReached, searchableFields,
+      failureLine, pairedFailureLine,
     } from "./logic.js";
 
     const CONTEXT    = window.__CONTEXT_URL    ?? "";
@@ -166,7 +167,8 @@
         body: JSON.stringify({ sql, params }),
       });
       const json = await res.json().catch(() => null);
-      if (!res.ok || !json || typeof json !== "object" || json.error) throw new Error(json?.error || "Couldn’t reach the hub. Try again.");
+      // The status (and `code`) pick the line shown; the hub's text stays in the console.
+      if (!res.ok || !json || typeof json !== "object" || json.error) throw Object.assign(new Error(json?.error || "Couldn’t reach the hub. Try again."), { status: res.status, code: json?.code });
       return json;
     }
 
@@ -464,7 +466,7 @@
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ partner_id: chosen }),
           });
-          if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? "Could not save partner");
+          if (!res.ok) throw Object.assign(new Error((await res.json().catch(() => ({}))).error ?? "Could not save partner"), { status: res.status });
           const s = await res.json();
           partnerId = s.partner_id ?? chosen;
           partnerReciprocal = !!s.reciprocal;
@@ -474,7 +476,7 @@
       } catch (e) {
         if (btn) { btn.disabled = false; btn.textContent = "Connect"; }
         console.error("[accountability-partner] could not connect with your partner", e);
-        await hubAlert("Couldn’t connect with your partner — try again.");
+        await hubAlert(failureLine(e, { action: "connect with your partner", thing: "partner" }));
       }
     }
 
@@ -485,19 +487,34 @@
       const now = new Date().toISOString();
 
       try {
-        if (existing) {
-          if (ME) await db("UPDATE app_accountability_partner__checkins SET status = ? WHERE id = ?", [status, existing.id]);
-          existing.status = status;
-        } else {
+        let row = existing;
+        if (!row) {
           const id = crypto.randomUUID();
-          if (ME) await db(
-            "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            [id, myId(), commitmentId, today, status, "", now]);
-          checkins.push({ id, member_id: myId(), commitment_id: commitmentId, check_date: today, status, note: "", created_at: now });
+          try {
+            if (ME) await db(
+              "INSERT INTO app_accountability_partner__checkins (id, member_id, commitment_id, check_date, status, note, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              [id, myId(), commitmentId, today, status, "", now]);
+            checkins.push({ id, member_id: myId(), commitment_id: commitmentId, check_date: today, status, note: "", created_at: now });
+          } catch (e) {
+            // One check-in per goal per day: a 403 can mean today's is already
+            // logged (another device, or a try whose answer was lost). Adopt it
+            // and update it; otherwise the refusal stands.
+            if (e?.status !== 403) throw e;
+            const found = await db("SELECT * FROM app_accountability_partner__checkins WHERE member_id = ? AND commitment_id = ? AND check_date = ?", [myId(), commitmentId, today])
+              .then(r => r.rows?.[0] ?? null, e2 => { console.error(e2); return null; });
+            if (!found) throw e;
+            console.error(e);
+            checkins.push(found);
+            row = found;
+          }
+        }
+        if (row) {
+          if (ME) await db("UPDATE app_accountability_partner__checkins SET status = ? WHERE id = ?", [status, row.id]);
+          row.status = status;
         }
       } catch (e) {
         console.error("[accountability-partner] could not save the check-in", e);
-        await hubAlert("Couldn’t save the check-in — try again.");
+        await hubAlert(failureLine(e, { action: "save the check-in", thing: "check-in" }));
         return;
       }
       render();
@@ -585,7 +602,7 @@
       } catch (e) {
         if (btn) { btn.disabled = false; btn.textContent = "Save"; }
         console.error("[accountability-partner] could not save the goal", e);
-        await hubAlert("Couldn’t save the goal — try again.");
+        await hubAlert(failureLine(e, { action: "save the goal", thing: "goal" }));
       }
     }
 
@@ -595,7 +612,7 @@
         if (ME) await db("UPDATE app_accountability_partner__commitments SET active = 0 WHERE id = ?", [id]);
       } catch (e) {
         console.error("[accountability-partner] could not archive the goal", e);
-        await hubAlert("Couldn’t archive the goal — try again.");
+        await hubAlert(failureLine(e, { action: "archive the goal", thing: "goal" }));
         return;
       }
       const c = commitments.find((x) => x.id === id);
@@ -620,13 +637,20 @@
       if (!content.trim()) return;
       const btn = modalEl?.querySelector(".btn-primary");
       if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+      // One key per compose form and text, sent on every retry: the hub stores a
+      // message whose answer was lost once, not twice. Edited text is a new message.
+      let idempotencyKey = null;
+      if (!sos && modalEl) {
+        if (modalEl.dataset.keyText !== text) { modalEl.dataset.msgKey = crypto.randomUUID(); modalEl.dataset.keyText = text; }
+        idempotencyKey = modalEl.dataset.msgKey;
+      }
       try {
         if (ME) {
           const res = await fetch(`/run/${APP_ID}/api/paired-message`, {
             method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "send", content: text }),
+            body: JSON.stringify({ action: "send", content: text, ...(idempotencyKey ? { idempotency_key: idempotencyKey } : {}) }),
           });
-          if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? "Could not send");
+          if (!res.ok) throw Object.assign(new Error((await res.json().catch(() => ({}))).error ?? "Could not send"), { status: res.status });
         }
         messages.push({ id: crypto.randomUUID(), sender_id: myId(), recipient_id: partnerId, content: text, sent_at: new Date().toISOString(), read_at: null });
         closeModal();
@@ -646,7 +670,7 @@
       } catch (e) {
         if (btn) { btn.disabled = false; btn.textContent = "Send"; }
         console.error("[accountability-partner] could not send the message", e);
-        await hubAlert("Couldn’t send the message — try again.");
+        await hubAlert(pairedFailureLine(e, { action: "send the message", thing: "message" }));
       }
     }
 
@@ -708,7 +732,7 @@
       } catch (e) {
         if (btn) { btn.disabled = false; btn.textContent = "Turn on"; }
         console.error("[accountability-partner] could not save the alert", e);
-        await hubAlert("Couldn’t save the alert — try again.");
+        await hubAlert(failureLine(e, { action: "save the alert", thing: "alert" }));
       }
     }
 
@@ -717,7 +741,7 @@
         if (myProfile && ME) await db("UPDATE app_accountability_partner__profiles SET active = 0 WHERE id = ?", [myProfile.id]);
       } catch (e) {
         console.error("[accountability-partner] could not turn off the alert", e);
-        await hubAlert("Couldn’t turn off the alert — try again.");
+        await hubAlert(failureLine(e, { action: "turn off the alert", thing: "alert" }));
         return;
       }
       if (myProfile) myProfile.active = 0;
